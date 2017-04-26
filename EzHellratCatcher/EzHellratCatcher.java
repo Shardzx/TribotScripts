@@ -27,14 +27,14 @@ import scripts.ezhellratcatcher.*;
 public class EzHellratCatcher extends Script implements MessageListening07,Arguments,Painting {
 
 	private final List<Node> nodes = new ArrayList<Node>();
-	private Node currentNode;
+	private Node currentNode = null;
 	
 	@Override
 	public void onPaint(Graphics g) {
 		long runtime = Timing.timeFromMark(Vars.START_TIME);
 		g.drawString("EzHellratCatcher", 5, 50);
 		g.drawString("Time running: " + Timing.msToString(runtime), 5, 70);
-		g.drawString("State: " + currentNode.toString(),5,90);
+		g.drawString("State: " + currentNode != null ? currentNode.toString() : "null",5,90);
 		g.drawString("Mice caught: " + Vars.miceCaught, 5, 110);
 	}
 
