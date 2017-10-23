@@ -155,7 +155,6 @@ public class ClientOfKourend extends EnumScript<State> implements Painting{
 			return State.LOGGING_IN;
 		}
 		currentStep = Game.getSetting(GAME_SETTING);
-		println(currentStep);
 		if(currentStep >= 1 && currentStep < 1986){
 			enchanted_quill = Inventory.find(ENCHANTED_QUILL);
 			if(enchanted_quill.length == 0){
