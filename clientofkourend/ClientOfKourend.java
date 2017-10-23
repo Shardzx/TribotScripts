@@ -29,7 +29,7 @@ import org.tribot.script.interfaces.Painting;
 
 import scripts.Utilities.ACamera;
 import scripts.Utilities.EzConditions;
-import scripts.ezquests.clientofkourend.utils.Shop;
+import scripts.clientofkourend.utils.Shop;
 import scripts.webwalker_logic.WebWalker;
 import scripts.webwalker_logic.local.walker_engine.interaction_handling.InteractionHelper;
 import scripts.webwalker_logic.local.walker_engine.interaction_handling.NPCInteraction;
