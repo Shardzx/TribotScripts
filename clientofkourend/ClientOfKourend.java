@@ -151,35 +151,10 @@ public class ClientOfKourend extends EnumScript<State> implements Painting{
 
 	public State getState() {
 		RSTile myPos = Player.getPosition();
-		if(Login.getLoginState() != Login.STATE.INGAME){
+		if(!Universal.isGameLoaded()){
 			return State.LOGGING_IN;
 		}
 		currentStep = Game.getSetting(GAME_SETTING);
-		if(currentStep >= 1 && currentStep < 1986){
-			enchanted_quill = Inventory.find(ENCHANTED_QUILL);
-			if(enchanted_quill.length == 0){
-				feather = Inventory.find(FEATHER);
-				enchanted_scroll = Inventory.find(ENCHANTED_SCROLL);
-				if(feather.length > 0 && enchanted_scroll.length > 0){
-					return State.USING_FEATHER_ON_ENCHANTED_SCROLL;
-				} else if(Banking.isInBank()){
-					if(Banking.isBankScreenOpen()){
-						if(Banking.find(FEATHER).length > 0){
-							return State.WITHDRAWING_FEATHER;
-						} else if(Banking.find(ENCHANTED_SCROLL).length > 0){
-							return State.WITHDRAWING_ENCHANTED_SCROLL;
-						} else{//TODO
-							println("Feather not detected. Ending script.");
-							return null;
-						}
-					} else{
-						return State.OPENING_BANK;
-					}
-				} else{
-					return State.WALKING_TO_BANK;
-				}
-			}
-		}
 		switch(currentStep){
 		case 0://Quest not started.
 			feather = Inventory.find(FEATHER);
@@ -198,6 +173,10 @@ public class ClientOfKourend extends EnumScript<State> implements Painting{
 				}
 			}
 		case 1://Quest started, talked to Veos. Need to use Feather on Enchanted scroll to get Enchanted quill, and then go to Piscarilius general store
+			enchanted_quill = Inventory.find(ENCHANTED_QUILL);
+			if(enchanted_quill.length == 0){
+				return getEnchantedQuillState();
+			}
 			store_owner = NPCs.find(PISCARILIUS);
 			if(store_owner.length > 0){
 				if(isConversing()){
@@ -209,6 +188,10 @@ public class ClientOfKourend extends EnumScript<State> implements Painting{
 				return State.WALKING_TO_PISCARILIUS_STORE;
 			}
 		case 65://from Piscarilius -> Hosidius
+			enchanted_quill = Inventory.find(ENCHANTED_QUILL);
+			if(enchanted_quill.length == 0){
+				return getEnchantedQuillState();
+			}
 			store_owner = NPCs.find(HOSIDIUS);
 			if(store_owner.length > 0){
 				if(isConversing()){
@@ -220,6 +203,10 @@ public class ClientOfKourend extends EnumScript<State> implements Painting{
 				return State.WALKING_TO_HOSIDIUS_STORE;
 			}
 		case 1089://from Hosidius -> Shayzien
+			enchanted_quill = Inventory.find(ENCHANTED_QUILL);
+			if(enchanted_quill.length == 0){
+				return getEnchantedQuillState();
+			}
 			store_owner = NPCs.find(SHAYZIEN);
 			if(store_owner.length > 0){
 				if(isConversing()){
@@ -231,6 +218,10 @@ public class ClientOfKourend extends EnumScript<State> implements Painting{
 				return State.WALKING_TO_SHAYZIEN_STORE;
 			}
 		case 1601://from Shayzien -> Lovakengj
+			enchanted_quill = Inventory.find(ENCHANTED_QUILL);
+			if(enchanted_quill.length == 0){
+				return getEnchantedQuillState();
+			}
 			store_owner = NPCs.find(LOVAKENGJ);
 			if(store_owner.length > 0){
 				if(isConversing()){
@@ -242,6 +233,10 @@ public class ClientOfKourend extends EnumScript<State> implements Painting{
 				return State.WALKING_TO_LOVAKENGJ_STORE;
 			}
 		case 1857://from Lovakengj -> Arceuus
+			enchanted_quill = Inventory.find(ENCHANTED_QUILL);
+			if(enchanted_quill.length == 0){
+				return getEnchantedQuillState();
+			}
 			store_owner = NPCs.find(ARCEUUS);
 			if(store_owner.length > 0){
 				if(isConversing()){
@@ -369,6 +364,29 @@ public class ClientOfKourend extends EnumScript<State> implements Painting{
 					println("Feather not detected. Withdrawing coins to buy one.");
 					needToBuyFeather = true;
 					return getState();
+				}
+			} else{
+				return State.OPENING_BANK;
+			}
+		} else{
+			return State.WALKING_TO_BANK;
+		}
+	}
+	
+	private State getEnchantedQuillState(){
+		feather = Inventory.find(FEATHER);
+		enchanted_scroll = Inventory.find(ENCHANTED_SCROLL);
+		if(feather.length > 0 && enchanted_scroll.length > 0){
+			return State.USING_FEATHER_ON_ENCHANTED_SCROLL;
+		} else if(Banking.isInBank()){
+			if(Banking.isBankScreenOpen()){
+				if(Banking.find(FEATHER).length > 0){
+					return State.WITHDRAWING_FEATHER;
+				} else if(Banking.find(ENCHANTED_SCROLL).length > 0){
+					return State.WITHDRAWING_ENCHANTED_SCROLL;
+				} else{//TODO
+					println("Feather not detected. Ending script.");
+					return null;
 				}
 			} else{
 				return State.OPENING_BANK;
