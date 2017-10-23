@@ -191,6 +191,55 @@ public class EzConditions {
 		};
 	}
 
+	public static Condition itemLeftInventory(String... item) {
+		final int count = Inventory.getCount(item);
+		return new Condition(){
 
+			@Override
+			public boolean active() {
+				General.sleep(100);
+				return Inventory.getCount(item) < count;
+			}
+			
+		};
+	}
+	public static Condition itemEnteredInventory(String... item) {
+		final int count = Inventory.getCount(item);
+		return new Condition(){
+
+			@Override
+			public boolean active() {
+				General.sleep(100);
+				return Inventory.getCount(item) > count;
+			}
+			
+		};
+	}
+	
+	public static Condition bankIsClosed(){
+		return new Condition()
+		{
+
+			@Override
+			public boolean active() {
+				General.sleep(100);
+				return !Banking.isBankScreenOpen();
+			}
+	
+		};
+	}
+	
+	public static Condition bankIsOpen(){
+		return new Condition()
+		{
+
+			@Override
+			public boolean active() {
+				General.sleep(100);
+				return Banking.isBankScreenOpen();
+			}
+	
+		};
+	}
 	
 }
