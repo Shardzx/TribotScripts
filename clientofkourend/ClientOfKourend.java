@@ -37,55 +37,63 @@ import scripts.webwalker_logic.shared.helpers.BankHelper;
 
 public class ClientOfKourend extends EnumScript<State> implements Painting{
 
-	public State			state;
+	public State		state;
 	
 	private final String	FEATHER = "Feather",
-							ENCHANTED_SCROLL = "Enchanted scroll",
-							ENCHANTED_QUILL = "Enchanted quill",
-							ORB = "Mysterious orb",
-							VEOS = "Veos",
-							PISCARILIUS = "Leenz",
-							HOSIDIUS = "Horace",
-							SHAYZIEN = "Jennifer",
-							LOVAKENGJ = "Munty",
-							ARCEUUS = "Regath",
-							COINS = "Coins",
-							GERRANT = "Gerrant",
-							ANTIQUE_LAMP = "Antique lamp";
+				ENCHANTED_SCROLL = "Enchanted scroll",
+				ENCHANTED_QUILL = "Enchanted quill",
+				ORB = "Mysterious orb",
+				VEOS = "Veos",
+				PISCARILIUS = "Leenz",
+				HOSIDIUS = "Horace",
+				SHAYZIEN = "Jennifer",
+				LOVAKENGJ = "Munty",
+				ARCEUUS = "Regath",
+				COINS = "Coins",
+				GERRANT = "Gerrant",
+				ANTIQUE_LAMP = "Antique lamp";
 	
-	private final int		QUEST_COMPLETE_MASTER = 277,
-							QUEST_COMPLETE_CHILD = 17,
-							LAMP_MASTER = 134,
-							LAMP_CONFIRM = 26;
+	private final int	QUEST_COMPLETE_MASTER = 277,
+				QUEST_COMPLETE_CHILD = 17,
+				LAMP_MASTER = 134,
+				LAMP_CONFIRM = 26;
 							
 	private final RSArea	QUEST_START_AREA = new RSArea(new RSTile(1821,3691,0),new RSTile(1826,3685,0)),
-							PISCARILIUS_SHOP_AREA = new RSArea(new RSTile(1803,3723,0),new RSTile(1808,3728,0)),
-							HOSIDIUS_SHOP_AREA = new RSArea(new RSTile(1667,3624,0),new RSTile(1673,3615,0)),
-							SHAYZIEN_SHOP_AREA = new RSArea(new RSTile(1540,3635,0),new RSTile(1550,3620,0)),
-							LOVAKENGJ_SHOP_AREA = new RSArea(new RSTile(1549,3714,0),new RSTile(1558,3722,0)),
-							ARCEUUS_SHOP_AREA = new RSArea(new RSTile(1718,3730,0),new RSTile(1725,3720,0)),
-							DARK_ALTAR_AREA = new RSArea(new RSTile(1710,3885,0),new RSTile(1720,3880,0)),
-							FISHING_STORE_AREA = new RSArea(new RSTile(3011,3229,0),new RSTile(3017,3222,0));
+				PISCARILIUS_SHOP_AREA = new RSArea(new RSTile(1803,3723,0),new RSTile(1808,3728,0)),
+				HOSIDIUS_SHOP_AREA = new RSArea(new RSTile(1667,3624,0),new RSTile(1673,3615,0)),
+				SHAYZIEN_SHOP_AREA = new RSArea(new RSTile(1540,3635,0),new RSTile(1550,3620,0)),
+				LOVAKENGJ_SHOP_AREA = new RSArea(new RSTile(1549,3714,0),new RSTile(1558,3722,0)),
+				ARCEUUS_SHOP_AREA = new RSArea(new RSTile(1718,3730,0),new RSTile(1725,3720,0)),
+				DARK_ALTAR_AREA = new RSArea(new RSTile(1710,3885,0),new RSTile(1720,3880,0)),
+				FISHING_STORE_AREA = new RSArea(new RSTile(3011,3229,0),new RSTile(3017,3222,0));
 	
-	private ArrayList<String>	VEOS_CHAT_1 = 		new ArrayList<String>(Arrays.asList(new String[]{"Have you got any quests for me?","Sounds interesting! How can I help?"})),
-								VEOS_CHAT_2 = 		new ArrayList<String>(Arrays.asList(new String[]{"Let's talk about your client...",
-													})),
-								VEOS_CHAT_3 =		new ArrayList<String>(Arrays.asList(new String[]{"Let's talk about your client..."})),
-								PISCARILIUS_CHAT = 	new ArrayList<String>(Arrays.asList(new String[]{"Can I ask you about the Piscarilius house?",
-												"How do people start gaining favour in Piscarilius?",
-												"What is it that Piscarilius provides for Kourend?"})),
-								HOSIDIUS_CHAT = 	new ArrayList<String>(Arrays.asList(new String[]{"Can I ask you about the Hosidius house?",
-												"What is it that Hosidius provides for Great Kourend?",
-												"How do people start gaining favour in Hosidius?"})),
-								SHAYZIEN_CHAT = 	new ArrayList<String>(Arrays.asList(new String[]{"Can I ask you about the Shayzien house?",
-												"What is it that Shayzien provides for Great Kourend?",
-												"How do people start gaining favour in Shayzien?"})),
-								LOVAKENGJ_CHAT =	new ArrayList<String>(Arrays.asList(new String[]{"Can I ask you about the Lovakengj house?",
-												"What is it that Lovakengj provides for Great Kourend?",
-												"How do people start gaining favour in Lovakengj?"})),
-								ARCEUUS_CHAT = 		new ArrayList<String>(Arrays.asList(new String[]{"Can I ask you about the Arceuus house?",
-												"What is it that Arceuus provides for Great Kourend?",
-												"How do people start gaining favour in Arceuus?"}));
+	private ArrayList<String>	VEOS_CHAT_1 = 		new ArrayList<String>(Arrays.asList(new String[]{
+									"Have you got any quests for me?",
+									"Sounds interesting! How can I help?"})),
+					VEOS_CHAT_2 = 		new ArrayList<String>(Arrays.asList(new String[]{
+									"Let's talk about your client..."})),
+					VEOS_CHAT_3 =		new ArrayList<String>(Arrays.asList(new String[]{
+									"Let's talk about your client..."})),
+					PISCARILIUS_CHAT = 	new ArrayList<String>(Arrays.asList(new String[]{
+									"Can I ask you about the Piscarilius house?",
+									"How do people start gaining favour in Piscarilius?",
+									"What is it that Piscarilius provides for Kourend?"})),
+					HOSIDIUS_CHAT = 	new ArrayList<String>(Arrays.asList(new String[]{
+									"Can I ask you about the Hosidius house?",
+									"What is it that Hosidius provides for Great Kourend?",
+									"How do people start gaining favour in Hosidius?"})),
+					SHAYZIEN_CHAT = 	new ArrayList<String>(Arrays.asList(new String[]{
+									"Can I ask you about the Shayzien house?",
+									"What is it that Shayzien provides for Great Kourend?",
+									"How do people start gaining favour in Shayzien?"})),
+					LOVAKENGJ_CHAT =	new ArrayList<String>(Arrays.asList(new String[]{
+									"Can I ask you about the Lovakengj house?",
+									"What is it that Lovakengj provides for Great Kourend?",
+									"How do people start gaining favour in Lovakengj?"})),
+					ARCEUUS_CHAT = 		new ArrayList<String>(Arrays.asList(new String[]{
+									"Can I ask you about the Arceuus house?",
+									"What is it that Arceuus provides for Great Kourend?",
+									"How do people start gaining favour in Arceuus?"}));
 	
 	private ACamera			acamera;
 	
@@ -93,27 +101,28 @@ public class ClientOfKourend extends EnumScript<State> implements Painting{
 	
 	private final int		GAME_SETTING = 1566;
 	
-	public int				currentStep;
+	public int			currentStep;
 	
 	private RSItem[]		feather,
-							enchanted_scroll,
-							enchanted_quill,
-							orb,
-							lamp;
+					enchanted_scroll,
+					enchanted_quill,
+					orb,
+					lamp;
 	
-	private Filter<RSNPC>	VEOS_FILTER = Filters.NPCs.nameEquals(VEOS).combine(Filters.NPCs.inArea(QUEST_START_AREA), true);
+	private Filter<RSNPC>		VEOS_FILTER = Filters.NPCs.nameEquals(VEOS).combine(Filters.NPCs.inArea(QUEST_START_AREA), true);
 	
 	private RSNPC[]			veos,
-							store_owner;
+					store_owner;
+	
 	private long			START_TIME,
-							RUNTIME;
+					RUNTIME;
 	
 	private boolean			needToBuyFeather = false;
 	
 	private String			HOUSE_TO_CHOOSE = "Arceuus";
 	
-	private Skills.SKILLS	SKILL_1 = Skills.SKILLS.SLAYER,
-							SKILL_2 = Skills.SKILLS.SLAYER;
+	private Skills.SKILLS		SKILL_1 = Skills.SKILLS.SLAYER,
+					SKILL_2 = Skills.SKILLS.SLAYER;
 	
 	public ClientOfKourend(){
 		callingScript = this;
