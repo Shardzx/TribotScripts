@@ -199,18 +199,16 @@ public class ClientOfKourend extends EnumScript<State> implements Painting{
 				}
 			}
 		case 1://Quest started, talked to Veos. Need to use Feather on Enchanted scroll to get Enchanted quill, and then go to Piscarilius general store
-//			 else {
-				store_owner = NPCs.find(PISCARILIUS);
-				if(store_owner.length > 0){
-					if(isConversing()){
-						return State.CHAT_PISCARILIUS;
-					} else{
-						return State.TALKING_TO_PISCARILIUS_STORE_OWNER;
-					}
-				} else {
-					return State.WALKING_TO_PISCARILIUS_STORE;
+			store_owner = NPCs.find(PISCARILIUS);
+			if(store_owner.length > 0){
+				if(isConversing()){
+					return State.CHAT_PISCARILIUS;
+				} else{
+					return State.TALKING_TO_PISCARILIUS_STORE_OWNER;
 				}
-//			}
+			} else {
+				return State.WALKING_TO_PISCARILIUS_STORE;
+			}
 		case 65://from Piscarilius -> Hosidius
 			store_owner = NPCs.find(HOSIDIUS);
 			if(store_owner.length > 0){
