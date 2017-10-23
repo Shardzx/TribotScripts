@@ -10,7 +10,7 @@ import org.tribot.api.input.Keyboard;
 import org.tribot.api2007.Inventory;
 import org.tribot.api2007.types.RSItem;
  
-public class triClient {
+public class Utilities {
 	
 	public static <T> T[] shuffleArray(T[] arr){
 		if(arr.length == 0 || arr.length == 1){
