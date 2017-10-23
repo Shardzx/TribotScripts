@@ -9,15 +9,14 @@ import java.util.List;
 import org.tribot.api.Timing;
 import org.tribot.api.types.generic.Filter;
 import org.tribot.api2007.Banking;
-import org.tribot.api2007.ChooseOption;
 import org.tribot.api2007.Game;
 import org.tribot.api2007.Interfaces;
 import org.tribot.api2007.Inventory;
+import org.tribot.api2007.Login;
 import org.tribot.api2007.NPCChat;
 import org.tribot.api2007.NPCs;
 import org.tribot.api2007.Player;
 import org.tribot.api2007.Skills;
-import org.tribot.api2007.Skills.SKILLS;
 import org.tribot.api2007.ext.Filters;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSInterface;
@@ -30,8 +29,6 @@ import org.tribot.script.interfaces.Painting;
 
 import scripts.Utilities.ACamera;
 import scripts.Utilities.EzConditions;
-import scripts.Utilities.Utilities;
-import scripts.ezfarm.Universal;
 import scripts.ezquests.clientofkourend.utils.Shop;
 import scripts.webwalker_logic.WebWalker;
 import scripts.webwalker_logic.local.walker_engine.interaction_handling.InteractionHelper;
@@ -145,7 +142,7 @@ public class ClientOfKourend extends EnumScript<State> implements Painting{
 
 	public State getState() {
 		RSTile myPos = Player.getPosition();
-		if(!Universal.isGameLoaded()){
+		if(Login.getLoginState() != Login.STATE.INGAME){
 			return State.LOGGING_IN;
 		}
 		currentStep = Game.getSetting(GAME_SETTING);
