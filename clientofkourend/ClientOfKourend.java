@@ -8,7 +8,6 @@ import java.util.List;
 
 import org.tribot.api.Timing;
 import org.tribot.api.types.generic.Filter;
-import org.tribot.api2007.Banking;
 import org.tribot.api2007.Game;
 import org.tribot.api2007.Interfaces;
 import org.tribot.api2007.Inventory;
@@ -378,21 +377,8 @@ public class ClientOfKourend extends EnumScript<State> implements Painting{
 		enchanted_scroll = Inventory.find(ENCHANTED_SCROLL);
 		if(feather.length > 0 && enchanted_scroll.length > 0){
 			return State.USING_FEATHER_ON_ENCHANTED_SCROLL;
-		} else if(Banking.isInBank()){
-			if(Banking.isBankScreenOpen()){
-				if(Banking.find(FEATHER).length > 0){
-					return State.WITHDRAWING_FEATHER;
-				} else if(Banking.find(ENCHANTED_SCROLL).length > 0){
-					return State.WITHDRAWING_ENCHANTED_SCROLL;
-				} else{//TODO
-					println("Feather not detected. Ending script.");
-					return null;
-				}
-			} else{
-				return State.OPENING_BANK;
-			}
-		} else{
-			return State.WALKING_TO_BANK;
+		} else { 
+			return getFeatherState();
 		}
 	}
 	
