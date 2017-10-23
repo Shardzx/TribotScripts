@@ -1,4 +1,4 @@
-package scripts.ezquests.clientofkourend;
+package scripts.clientofkourend;
 
 import java.awt.Color;
 import java.awt.Graphics;
