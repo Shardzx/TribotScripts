@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.tribot.api.Timing;
 import org.tribot.api.types.generic.Filter;
+import org.tribot.api2007.Banking;
 import org.tribot.api2007.Game;
 import org.tribot.api2007.Interfaces;
 import org.tribot.api2007.Inventory;
