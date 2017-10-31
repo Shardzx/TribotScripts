@@ -151,7 +151,7 @@ public class ClientOfKourend extends EnumScript<State> implements Painting{
 
 	public State getState() {
 		RSTile myPos = Player.getPosition();
-		if(!Universal.isGameLoaded()){
+		if(Login.getLoginState() != Login.STATE.INGAME){
 			return State.LOGGING_IN;
 		}
 		currentStep = Game.getSetting(GAME_SETTING);
