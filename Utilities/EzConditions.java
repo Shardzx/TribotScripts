@@ -242,4 +242,28 @@ public class EzConditions {
 		};
 	}
 	
+	public static Condition interfaceUp(int id){
+		return new Condition()
+		{
+			@Override
+			public boolean active()
+			{
+				General.sleep(100);
+				return Interfaces.get(id) != null;
+			}		
+		};
+	}
+	
+	public static Condition expGained(final long startXP, final Skills.SKILLS skill){
+		return new Condition()
+		{
+
+			@Override
+			public boolean active() {
+				General.sleep(100);
+				return Skills.getXP(skill)>startXP;
+			}
+			
+		};
+	}
 }
