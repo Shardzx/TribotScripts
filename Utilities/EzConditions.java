@@ -111,7 +111,7 @@ public class EzConditions {
 			@Override
 			public boolean active() {
 				General.sleep(100);
-				return EzBanking.isInBank();
+				return Banking.isInBank();
 			}
 		};
 	}
