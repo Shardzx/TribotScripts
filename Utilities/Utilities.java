@@ -36,4 +36,7 @@ public class Utilities {
 		return Timing.waitCondition(EzConditions.inventoryChange(false), 1500) && Inventory.find(items).length == 0;
 	}
 	
+	public static boolean isConversing(){
+		return NPCChat.getOptions() != null || NPCChat.getClickContinueInterface() != null || NPCChat.getMessage() != null;
+	}
 }
