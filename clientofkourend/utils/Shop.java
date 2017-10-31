@@ -1,4 +1,4 @@
-package scripts.ezquests.clientofkourend.utils;
+package scripts.clientofkourend.utils;
 
 import org.tribot.api.General;
 import org.tribot.api.types.generic.Condition;
