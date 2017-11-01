@@ -45,23 +45,23 @@ public class ClientOfKourend extends EnumScript<State> implements Painting,Argum
 	public State		state;
 	
 	private final String	FEATHER = "Feather",
-							ENCHANTED_SCROLL = "Enchanted scroll",
-							ENCHANTED_QUILL = "Enchanted quill",
-							ORB = "Mysterious orb",
-							VEOS = "Veos",
-							PISCARILIUS = "Leenz",
-							HOSIDIUS = "Horace",
-							SHAYZIEN = "Jennifer",
-							LOVAKENGJ = "Munty",
-							ARCEUUS = "Regath",
-							COINS = "Coins",
-							GERRANT = "Gerrant",
-							ANTIQUE_LAMP = "Antique lamp";
+				ENCHANTED_SCROLL = "Enchanted scroll",
+				ENCHANTED_QUILL = "Enchanted quill",
+				ORB = "Mysterious orb",
+				VEOS = "Veos",
+				PISCARILIUS = "Leenz",
+				HOSIDIUS = "Horace",
+				SHAYZIEN = "Jennifer",
+				LOVAKENGJ = "Munty",
+				ARCEUUS = "Regath",
+				COINS = "Coins",
+				GERRANT = "Gerrant",
+				ANTIQUE_LAMP = "Antique lamp";
 	
 	private final int	QUEST_COMPLETE_MASTER = 277,
-						QUEST_COMPLETE_CHILD = 17,
-						LAMP_MASTER = 134,
-						LAMP_CONFIRM = 26;
+				QUEST_COMPLETE_CHILD = 17,
+				LAMP_MASTER = 134,
+				LAMP_CONFIRM = 26;
 							
 	private final RSArea	QUEST_START_AREA = new RSArea(new RSTile(1821,3691,0),new RSTile(1826,3685,0)),
 				PISCARILIUS_SHOP_AREA = new RSArea(new RSTile(1803,3723,0),new RSTile(1808,3728,0)),
@@ -127,7 +127,7 @@ public class ClientOfKourend extends EnumScript<State> implements Painting,Argum
 	private String			HOUSE_TO_CHOOSE = "Arceuus";
 	
 	private Skills.SKILLS		SKILL_1,
-								SKILL_2;
+					SKILL_2;
 	
 	public ClientOfKourend(){
 		callingScript = this;
@@ -191,10 +191,10 @@ public class ClientOfKourend extends EnumScript<State> implements Painting,Argum
 	}
 
 	public State getState() {
-		RSTile myPos = Player.getPosition();
 		if(Login.getLoginState() != Login.STATE.INGAME){
 			return State.LOGGING_IN;
 		}
+		RSTile myPos = Player.getPosition();
 		currentStep = Game.getSetting(GAME_SETTING);
 		switch(currentStep){
 		case 0://Quest not started.
