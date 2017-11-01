@@ -4,8 +4,10 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
+import org.tribot.api.General;
 import org.tribot.api.Timing;
 import org.tribot.api.types.generic.Filter;
 import org.tribot.api2007.Banking;
@@ -25,6 +27,8 @@ import org.tribot.api2007.types.RSNPC;
 import org.tribot.api2007.types.RSTile;
 import org.tribot.script.EnumScript;
 import org.tribot.script.Script;
+import org.tribot.script.ScriptManifest;
+import org.tribot.script.interfaces.Arguments;
 import org.tribot.script.interfaces.Painting;
 
 import scripts.Utilities.ACamera;
@@ -35,28 +39,29 @@ import scripts.webwalker_logic.local.walker_engine.interaction_handling.Interact
 import scripts.webwalker_logic.local.walker_engine.interaction_handling.NPCInteraction;
 import scripts.webwalker_logic.shared.helpers.BankHelper;
 
-public class ClientOfKourend extends EnumScript<State> implements Painting{
+@ScriptManifest(authors= {"FALSkills"}, category= "Quests", name= "Client of Kourend")
+public class ClientOfKourend extends EnumScript<State> implements Painting,Arguments{
 
 	public State		state;
 	
 	private final String	FEATHER = "Feather",
-				ENCHANTED_SCROLL = "Enchanted scroll",
-				ENCHANTED_QUILL = "Enchanted quill",
-				ORB = "Mysterious orb",
-				VEOS = "Veos",
-				PISCARILIUS = "Leenz",
-				HOSIDIUS = "Horace",
-				SHAYZIEN = "Jennifer",
-				LOVAKENGJ = "Munty",
-				ARCEUUS = "Regath",
-				COINS = "Coins",
-				GERRANT = "Gerrant",
-				ANTIQUE_LAMP = "Antique lamp";
+							ENCHANTED_SCROLL = "Enchanted scroll",
+							ENCHANTED_QUILL = "Enchanted quill",
+							ORB = "Mysterious orb",
+							VEOS = "Veos",
+							PISCARILIUS = "Leenz",
+							HOSIDIUS = "Horace",
+							SHAYZIEN = "Jennifer",
+							LOVAKENGJ = "Munty",
+							ARCEUUS = "Regath",
+							COINS = "Coins",
+							GERRANT = "Gerrant",
+							ANTIQUE_LAMP = "Antique lamp";
 	
 	private final int	QUEST_COMPLETE_MASTER = 277,
-				QUEST_COMPLETE_CHILD = 17,
-				LAMP_MASTER = 134,
-				LAMP_CONFIRM = 26;
+						QUEST_COMPLETE_CHILD = 17,
+						LAMP_MASTER = 134,
+						LAMP_CONFIRM = 26;
 							
 	private final RSArea	QUEST_START_AREA = new RSArea(new RSTile(1821,3691,0),new RSTile(1826,3685,0)),
 				PISCARILIUS_SHOP_AREA = new RSArea(new RSTile(1803,3723,0),new RSTile(1808,3728,0)),
@@ -121,8 +126,8 @@ public class ClientOfKourend extends EnumScript<State> implements Painting{
 	
 	private String			HOUSE_TO_CHOOSE = "Arceuus";
 	
-	private Skills.SKILLS		SKILL_1 = Skills.SKILLS.SLAYER,
-					SKILL_2 = Skills.SKILLS.SLAYER;
+	private Skills.SKILLS		SKILL_1,
+								SKILL_2;
 	
 	public ClientOfKourend(){
 		callingScript = this;
@@ -141,11 +146,47 @@ public class ClientOfKourend extends EnumScript<State> implements Painting{
 		g.drawString("State: " + state + " step: "+currentStep, 5, 90);
 	}
 
+	@Override
+	public void passArguments(HashMap<String, String> arg0) {
+		String scriptSelect = arg0.get("custom_input");
+		String clientStarter = arg0.get("autostart");
+		String input = clientStarter != null ? clientStarter : scriptSelect;
+		for(String arg:input.split(";")){
+			if(arg.startsWith("house")){
+				HOUSE_TO_CHOOSE = arg.split(":")[1];
+			} else if(arg.startsWith("skill1")){
+				SKILL_1 = Enum.valueOf(Skills.SKILLS.class, arg.split(":")[1]);
+			} else if(arg.startsWith("skill2")){
+				SKILL_2 = Enum.valueOf(Skills.SKILLS.class, arg.split(":")[1]);
+			}
+		}
+		
+	}
 
 	@Override
 	public State getInitialState() {
 		START_TIME = Timing.currentTimeMillis();
 		acamera = new ACamera(callingScript);
+		if(HOUSE_TO_CHOOSE.toLowerCase().startsWith("a")){
+			HOUSE_TO_CHOOSE = "Arceuus";
+		} else if(HOUSE_TO_CHOOSE.toLowerCase().startsWith("h")){
+			HOUSE_TO_CHOOSE = "Hosidius";
+		} else if(HOUSE_TO_CHOOSE.toLowerCase().startsWith("l")){
+			HOUSE_TO_CHOOSE = "Lovakengj";
+		} else if(HOUSE_TO_CHOOSE.toLowerCase().startsWith("p")){
+			HOUSE_TO_CHOOSE = "Piscarilius";
+		} else{
+			HOUSE_TO_CHOOSE = "Shayzien";
+		}
+		if(SKILL_1 == null){
+			SKILL_1 = Skills.SKILLS.values()[General.random(0, Skills.SKILLS.values().length-1)];
+		}
+		if(SKILL_2 == null){
+			SKILL_2 = Skills.SKILLS.values()[General.random(0, Skills.SKILLS.values().length-1)];
+		}
+		println("Starting Client of Kourend.");
+		println("We will be getting 20% favor to house: " + HOUSE_TO_CHOOSE);
+		println("We will be gaining exp in skills: " + SKILL_1 + ", " + SKILL_2);
 		return getState();
 	}
 
@@ -432,6 +473,11 @@ public class ClientOfKourend extends EnumScript<State> implements Painting{
 			if(Banking.close()){
 				Timing.waitCondition(EzConditions.bankIsClosed(), 3000);
 			}
+		case CLOSING_QUEST_COMPLETE_INTERFACE:
+			RSInterface close = Interfaces.get(QUEST_COMPLETE_MASTER, QUEST_COMPLETE_CHILD);
+			if(close != null && close.click()){
+				Timing.waitCondition(EzConditions.interfaceNotUp(QUEST_COMPLETE_MASTER), 5000);
+			}
 			break;
 		case DEPOSITING_ALL:
 			if(Banking.depositAll() > 0){
@@ -514,7 +560,7 @@ public class ClientOfKourend extends EnumScript<State> implements Painting{
 			break;
 		case WITHDRAWING_ORB:
 			withdraw(1,ORB);
-			break;		
+			break;	
 		default:
 			break;
 		
@@ -642,4 +688,5 @@ public class ClientOfKourend extends EnumScript<State> implements Painting{
 		}
 		return -1;
 	}
+	
 }
