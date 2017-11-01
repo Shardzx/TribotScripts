@@ -4,29 +4,13 @@ import org.tribot.api.General;
 import org.tribot.api.types.generic.Condition;
 import org.tribot.api.types.generic.Filter;
 import org.tribot.api2007.Banking;
-import org.tribot.api2007.ChooseOption;
-import org.tribot.api2007.Equipment;
-import org.tribot.api2007.Game;
-import org.tribot.api2007.GameTab;
-import org.tribot.api2007.GameTab.TABS;
 import org.tribot.api2007.Interfaces;
 import org.tribot.api2007.Inventory;
-import org.tribot.api2007.NPCChat;
 import org.tribot.api2007.NPCs;
-import org.tribot.api2007.Objects;
 import org.tribot.api2007.Player;
-import org.tribot.api2007.Prayer;
-import org.tribot.api2007.Prayer.PRAYERS;
 import org.tribot.api2007.Skills;
-import org.tribot.api2007.Trading;
-import org.tribot.api2007.Skills.SKILLS;
 import org.tribot.api2007.types.RSArea;
-import org.tribot.api2007.types.RSCharacter;
-import org.tribot.api2007.types.RSInterface;
 import org.tribot.api2007.types.RSNPC;
-import org.tribot.api2007.types.RSObject;
-import org.tribot.api2007.types.RSTile;
-import org.tribot.api2007.types.RSVarBit;
 
 public class EzConditions {
 	
@@ -254,6 +238,18 @@ public class EzConditions {
 		};
 	}
 	
+	public static Condition interfaceNotUp(int id){
+		return new Condition()
+		{
+			@Override
+			public boolean active()
+			{
+				General.sleep(100);
+				return Interfaces.get(id) == null;
+			}		
+		};
+	}
+	
 	public static Condition expGained(final long startXP, final Skills.SKILLS skill){
 		return new Condition()
 		{
@@ -266,4 +262,5 @@ public class EzConditions {
 			
 		};
 	}
+
 }
