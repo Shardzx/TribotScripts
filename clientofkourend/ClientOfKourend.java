@@ -45,23 +45,23 @@ public class ClientOfKourend extends EnumScript<State> implements Painting,Argum
 	public State		state;
 	
 	private final String	FEATHER = "Feather",
-				ENCHANTED_SCROLL = "Enchanted scroll",
-				ENCHANTED_QUILL = "Enchanted quill",
-				ORB = "Mysterious orb",
-				VEOS = "Veos",
-				PISCARILIUS = "Leenz",
-				HOSIDIUS = "Horace",
-				SHAYZIEN = "Jennifer",
-				LOVAKENGJ = "Munty",
-				ARCEUUS = "Regath",
-				COINS = "Coins",
-				GERRANT = "Gerrant",
-				ANTIQUE_LAMP = "Antique lamp";
+							ENCHANTED_SCROLL = "Enchanted scroll",
+							ENCHANTED_QUILL = "Enchanted quill",
+							ORB = "Mysterious orb",
+							VEOS = "Veos",
+							PISCARILIUS = "Leenz",
+							HOSIDIUS = "Horace",
+							SHAYZIEN = "Jennifer",
+							LOVAKENGJ = "Munty",
+							ARCEUUS = "Regath",
+							COINS = "Coins",
+							GERRANT = "Gerrant",
+							ANTIQUE_LAMP = "Antique lamp";
 	
 	private final int	QUEST_COMPLETE_MASTER = 277,
-				QUEST_COMPLETE_CHILD = 17,
-				LAMP_MASTER = 134,
-				LAMP_CONFIRM = 26;
+						QUEST_COMPLETE_CHILD = 17,
+						LAMP_MASTER = 134,
+						LAMP_CONFIRM = 26;
 							
 	private final RSArea	QUEST_START_AREA = new RSArea(new RSTile(1821,3691,0),new RSTile(1826,3685,0)),
 				PISCARILIUS_SHOP_AREA = new RSArea(new RSTile(1803,3723,0),new RSTile(1808,3728,0)),
@@ -127,7 +127,7 @@ public class ClientOfKourend extends EnumScript<State> implements Painting,Argum
 	private String			HOUSE_TO_CHOOSE = "Arceuus";
 	
 	private Skills.SKILLS		SKILL_1,
-					SKILL_2;
+								SKILL_2;
 	
 	public ClientOfKourend(){
 		callingScript = this;
@@ -152,12 +152,16 @@ public class ClientOfKourend extends EnumScript<State> implements Painting,Argum
 		String clientStarter = arg0.get("autostart");
 		String input = clientStarter != null ? clientStarter : scriptSelect;
 		for(String arg:input.split(";")){
-			if(arg.startsWith("house")){
-				HOUSE_TO_CHOOSE = arg.split(":")[1];
-			} else if(arg.startsWith("skill1")){
-				SKILL_1 = Enum.valueOf(Skills.SKILLS.class, arg.split(":")[1]);
-			} else if(arg.startsWith("skill2")){
-				SKILL_2 = Enum.valueOf(Skills.SKILLS.class, arg.split(":")[1]);
+			try{
+				if(arg.startsWith("house")){
+					HOUSE_TO_CHOOSE = arg.split(":")[1];
+				} else if(arg.startsWith("skill1")){
+					SKILL_1 = Enum.valueOf(Skills.SKILLS.class, (arg.split(":")[1]).toUpperCase());
+				} else if(arg.startsWith("skill2")){
+					SKILL_2 = Enum.valueOf(Skills.SKILLS.class, (arg.split(":")[1]).toUpperCase());
+				}
+			} catch(Exception e){
+				println("Error in arguments. See script thread for instructions.");
 			}
 		}
 		
@@ -175,8 +179,11 @@ public class ClientOfKourend extends EnumScript<State> implements Painting,Argum
 			HOUSE_TO_CHOOSE = "Lovakengj";
 		} else if(HOUSE_TO_CHOOSE.toLowerCase().startsWith("p")){
 			HOUSE_TO_CHOOSE = "Piscarilius";
-		} else{
+		} else if(HOUSE_TO_CHOOSE.toLowerCase().startsWith("s")){
 			HOUSE_TO_CHOOSE = "Shayzien";
+		} else{
+			println("Terminating script, invalid house argument.");
+			return null;
 		}
 		if(SKILL_1 == null){
 			SKILL_1 = Skills.SKILLS.values()[General.random(0, Skills.SKILLS.values().length-1)];
@@ -185,16 +192,16 @@ public class ClientOfKourend extends EnumScript<State> implements Painting,Argum
 			SKILL_2 = Skills.SKILLS.values()[General.random(0, Skills.SKILLS.values().length-1)];
 		}
 		println("Starting Client of Kourend.");
-		println("We will be getting 20% favor to house: " + HOUSE_TO_CHOOSE);
+		println("We will be gaining 20% favor to house: " + HOUSE_TO_CHOOSE);
 		println("We will be gaining exp in skills: " + SKILL_1 + ", " + SKILL_2);
 		return getState();
 	}
 
 	public State getState() {
+		RSTile myPos = Player.getPosition();
 		if(Login.getLoginState() != Login.STATE.INGAME){
 			return State.LOGGING_IN;
 		}
-		RSTile myPos = Player.getPosition();
 		currentStep = Game.getSetting(GAME_SETTING);
 		switch(currentStep){
 		case 0://Quest not started.
