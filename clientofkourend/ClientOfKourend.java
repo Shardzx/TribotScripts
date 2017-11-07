@@ -198,7 +198,6 @@ public class ClientOfKourend extends EnumScript<State> implements Painting,Argum
 	}
 
 	public State getState() {
-		RSTile myPos = Player.getPosition();
 		if(Login.getLoginState() != Login.STATE.INGAME){
 			return State.LOGGING_IN;
 		}
@@ -309,6 +308,7 @@ public class ClientOfKourend extends EnumScript<State> implements Painting,Argum
 		case 1987://get new assignment, agree to do it. combined with 1988, just make sure you talk to veos if you don't have the orb.
 		case 1988://use orb at dark altar
 			orb = Inventory.find(ORB);
+			RSTile myPos = Player.getPosition();
 			if(orb.length == 0){
 				if(BankHelper.isInBank()){
 					if(Banking.isBankScreenOpen()){
