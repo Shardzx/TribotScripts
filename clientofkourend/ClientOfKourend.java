@@ -570,7 +570,7 @@ public class ClientOfKourend extends EnumScript<State> implements Painting,Argum
 			walkToArea(SHAYZIEN_SHOP_AREA);
 			break;
 		case WITHDRAWING_COINS:
-			withdraw(1,COINS);
+			withdraw(2,COINS);
 			break;
 		case WITHDRAWING_ENCHANTED_SCROLL:
 			withdraw(1,ENCHANTED_SCROLL);
@@ -612,7 +612,7 @@ public class ClientOfKourend extends EnumScript<State> implements Painting,Argum
 	}
 	
 	private boolean withdraw(int quantity, String... itemName){
-		return Banking.withdraw(1, itemName) && Timing.waitCondition(EzConditions.inventoryChange(true), 2500);
+		return Banking.withdraw(quantity, itemName) && Timing.waitCondition(EzConditions.inventoryChange(true), 2500);
 	}
 	
 	private void useFeatherOnScroll(){
