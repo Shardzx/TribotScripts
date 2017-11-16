@@ -1,4 +1,4 @@
-package scripts.clientofkourend;
+package scripts;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -17,6 +17,7 @@ import org.tribot.api2007.Inventory;
 import org.tribot.api2007.Login;
 import org.tribot.api2007.NPCChat;
 import org.tribot.api2007.NPCs;
+import org.tribot.api2007.PathFinding;
 import org.tribot.api2007.Player;
 import org.tribot.api2007.Skills;
 import org.tribot.api2007.ext.Filters;
@@ -33,44 +34,45 @@ import org.tribot.script.interfaces.Painting;
 
 import scripts.Utilities.ACamera;
 import scripts.Utilities.EzConditions;
+import scripts.clientofkourend.State;
 import scripts.clientofkourend.utils.Shop;
 import scripts.webwalker_logic.WebWalker;
+import scripts.webwalker_logic.local.walker_engine.NPCInteraction;
 import scripts.webwalker_logic.local.walker_engine.interaction_handling.InteractionHelper;
-import scripts.webwalker_logic.local.walker_engine.interaction_handling.NPCInteraction;
 import scripts.webwalker_logic.shared.helpers.BankHelper;
 
 @ScriptManifest(authors= {"FALSkills"}, category= "Quests", name= "Client of Kourend")
 public class ClientOfKourend extends EnumScript<State> implements Painting,Arguments{
 
-	public State		state;
+	public State			state;
 	
-	private final String	FEATHER = "Feather",
-							ENCHANTED_SCROLL = "Enchanted scroll",
-							ENCHANTED_QUILL = "Enchanted quill",
-							ORB = "Mysterious orb",
-							VEOS = "Veos",
-							PISCARILIUS = "Leenz",
-							HOSIDIUS = "Horace",
-							SHAYZIEN = "Jennifer",
-							LOVAKENGJ = "Munty",
-							ARCEUUS = "Regath",
-							COINS = "Coins",
-							GERRANT = "Gerrant",
-							ANTIQUE_LAMP = "Antique lamp";
+	private final String		FEATHER = "Feather",
+					ENCHANTED_SCROLL = "Enchanted scroll",
+					ENCHANTED_QUILL = "Enchanted quill",
+					ORB = "Mysterious orb",
+					VEOS = "Veos",
+					PISCARILIUS = "Leenz",
+					HOSIDIUS = "Horace",
+					SHAYZIEN = "Jennifer",
+					LOVAKENGJ = "Munty",
+					ARCEUUS = "Regath",
+					COINS = "Coins",
+					GERRANT = "Gerrant",
+					ANTIQUE_LAMP = "Antique lamp";
 	
-	private final int	QUEST_COMPLETE_MASTER = 277,
-						QUEST_COMPLETE_CHILD = 17,
-						LAMP_MASTER = 134,
-						LAMP_CONFIRM = 26;
+	private final int		QUEST_COMPLETE_MASTER = 277,
+					QUEST_COMPLETE_CHILD = 17,
+					LAMP_MASTER = 134,
+					LAMP_CONFIRM = 26;
 							
-	private final RSArea	QUEST_START_AREA = new RSArea(new RSTile(1821,3691,0),new RSTile(1826,3685,0)),
-				PISCARILIUS_SHOP_AREA = new RSArea(new RSTile(1803,3723,0),new RSTile(1808,3728,0)),
-				HOSIDIUS_SHOP_AREA = new RSArea(new RSTile(1667,3624,0),new RSTile(1673,3615,0)),
-				SHAYZIEN_SHOP_AREA = new RSArea(new RSTile(1540,3635,0),new RSTile(1550,3620,0)),
-				LOVAKENGJ_SHOP_AREA = new RSArea(new RSTile(1549,3714,0),new RSTile(1558,3722,0)),
-				ARCEUUS_SHOP_AREA = new RSArea(new RSTile(1718,3730,0),new RSTile(1725,3720,0)),
-				DARK_ALTAR_AREA = new RSArea(new RSTile(1710,3885,0),new RSTile(1720,3880,0)),
-				FISHING_STORE_AREA = new RSArea(new RSTile(3011,3229,0),new RSTile(3017,3222,0));
+	private final RSArea		QUEST_START_AREA = new RSArea(new RSTile(1821,3691,0),new RSTile(1826,3685,0)),
+					PISCARILIUS_SHOP_AREA = new RSArea(new RSTile(1803,3723,0),new RSTile(1808,3728,0)),
+					HOSIDIUS_SHOP_AREA = new RSArea(new RSTile(1667,3624,0),new RSTile(1673,3615,0)),
+					SHAYZIEN_SHOP_AREA = new RSArea(new RSTile(1540,3635,0),new RSTile(1550,3620,0)),
+					LOVAKENGJ_SHOP_AREA = new RSArea(new RSTile(1549,3714,0),new RSTile(1558,3722,0)),
+					ARCEUUS_SHOP_AREA = new RSArea(new RSTile(1718,3730,0),new RSTile(1725,3720,0)),
+					DARK_ALTAR_AREA = new RSArea(new RSTile(1710,3885,0),new RSTile(1720,3880,0)),
+					FISHING_STORE_AREA = new RSArea(new RSTile(3011,3229,0),new RSTile(3017,3222,0));
 	
 	private ArrayList<String>	VEOS_CHAT_1 = 		new ArrayList<String>(Arrays.asList(new String[]{
 									"Have you got any quests for me?",
@@ -127,7 +129,7 @@ public class ClientOfKourend extends EnumScript<State> implements Painting,Argum
 	private String			HOUSE_TO_CHOOSE = "Arceuus";
 	
 	private Skills.SKILLS		SKILL_1,
-								SKILL_2;
+					SKILL_2;
 	
 	public ClientOfKourend(){
 		callingScript = this;
@@ -202,6 +204,7 @@ public class ClientOfKourend extends EnumScript<State> implements Painting,Argum
 			return State.LOGGING_IN;
 		}
 		currentStep = Game.getSetting(GAME_SETTING);
+		RSTile myPos;
 		switch(currentStep){
 		case 0://Quest not started.
 			feather = Inventory.find(FEATHER);
@@ -219,7 +222,8 @@ public class ClientOfKourend extends EnumScript<State> implements Painting,Argum
 					return State.WALKING_TO_QUEST_START;
 				}
 			}
-		case 1://Quest started, talked to Veos. Need to use Feather on Enchanted scroll to get Enchanted quill, and then go to Piscarilius general store
+		case 1://Quest started, talked to Veos. Need to use Feather on Enchanted scroll to get Enchanted quill, 
+				//and then go to Piscarilius general store
 			enchanted_quill = Inventory.find(ENCHANTED_QUILL);
 			if(enchanted_quill.length == 0){
 				return getEnchantedQuillState();
@@ -285,9 +289,12 @@ public class ClientOfKourend extends EnumScript<State> implements Painting,Argum
 				return getEnchantedQuillState();
 			}
 			store_owner = NPCs.find(ARCEUUS);
+			myPos = Player.getPosition();
 			if(store_owner.length > 0){
 				if(isConversing()){
 					return State.CHAT_ARCEUUS;
+				} else if(myPos.distanceTo(store_owner[0]) > 1 && !PathFinding.canReach(store_owner[0], false)){
+					return State.WALKING_TO_ARCEUUS_STORE;
 				} else{
 					return State.TALKING_TO_ARCEUUS_STORE_OWNER;
 				}
@@ -305,10 +312,11 @@ public class ClientOfKourend extends EnumScript<State> implements Painting,Argum
 			} else{
 				return State.WALKING_TO_QUEST_START;
 			}
-		case 1987://get new assignment, agree to do it. combined with 1988, just make sure you talk to veos if you don't have the orb.
+		case 1987://get new assignment, agree to do it. combined with 1988, 
+			  //just make sure you talk to veos if you don't have the orb.
 		case 1988://use orb at dark altar
 			orb = Inventory.find(ORB);
-			RSTile myPos = Player.getPosition();
+			myPos = Player.getPosition();
 			if(orb.length == 0){
 				if(BankHelper.isInBank()){
 					if(Banking.isBankScreenOpen()){
@@ -346,7 +354,7 @@ public class ClientOfKourend extends EnumScript<State> implements Painting,Argum
 			} else{
 				return State.WALKING_TO_QUEST_START;
 			}
-		case 18374:
+		case 18374://potential quest setting before getting lamps.
 			lamp = Inventory.find(ANTIQUE_LAMP);
 			if(isConversing()){
 				return State.CHAT_VEOS_3;
@@ -447,6 +455,7 @@ public class ClientOfKourend extends EnumScript<State> implements Painting,Argum
 			break;
 		case CHAT_ARCEUUS:
 			skipChat(ARCEUUS_CHAT);
+			//Non-chat interface to handle.
 			if(NPCChat.getClickContinueInterface() != null){
 				NPCChat.clickContinue(true);
 			}
@@ -468,6 +477,10 @@ public class ClientOfKourend extends EnumScript<State> implements Painting,Argum
 			break;
 		case CHAT_VEOS_2:
 			skipChat(VEOS_CHAT_2);
+			//Non-chat interface to handle.
+			if(NPCChat.getClickContinueInterface() != null){
+				NPCChat.clickContinue(true);
+			}
 			break;
 		case CHAT_VEOS_3:
 			skipChat(VEOS_CHAT_3);
@@ -581,11 +594,6 @@ public class ClientOfKourend extends EnumScript<State> implements Painting,Argum
 	}
 	
 	private void skipChat(List<String> options){
-//		List<String> toRemove = new ArrayList<String>();
-//		for(String option:options){
-//			NPCInteraction.handleConversation(new String[]{option});
-//		}
-//		options.remove(toRemove);
 		NPCInteraction.handleConversation(options.toArray(new String[options.size()]));
 	}
 	
