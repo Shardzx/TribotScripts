@@ -1,19 +1,23 @@
 package scripts.clientofkourend.utils;
 
 import org.tribot.api.General;
+import org.tribot.api.Timing;
 import org.tribot.api.types.generic.Condition;
 import org.tribot.api2007.Interfaces;
-import org.tribot.api2007.types.RSInterfaceChild;
-import org.tribot.api2007.types.RSInterfaceComponent;
+import org.tribot.api2007.types.RSInterface;
 
 public class Shop {
 
+	private static RSInterface 	shopContents,
+					shopWindow;
+	private static RSInterface[]	shopItems;
+	
 	public static Condition getCondition(boolean opening){
 		return new Condition(){
 
 			@Override
 			public boolean active() {
-				General.sleep(100);
+				General.sleep(100,200);
 				return opening ? isShopOpen() : !isShopOpen();
 			}
 			
@@ -23,9 +27,11 @@ public class Shop {
 	
 	public static int getSlot(int itemId) {
 		if (isShopOpen()) {
-			RSInterfaceComponent[] items = getComponents();
+			shopItems = getComponents();
+			if(shopItems.length == 0)
+				return -1;
 			for (int i = 0; i < getStockLength(); i++) {
-				if (items[i] != null && itemId == items[i].getComponentItem())
+				if (shopItems[i] != null && itemId == shopItems[i].getComponentItem())
 					return i;
 			}
 		}
@@ -34,12 +40,12 @@ public class Shop {
 
 	public static boolean contains(int id) {
 		if (isShopOpen()) {
-			RSInterfaceChild child = Interfaces.get(300, 2);
-			if(child!=null){
-				RSInterfaceComponent[] children = child.getChildren();
-				if(children.length>0)
-				for (RSInterfaceComponent r : children) {
-					if (r.getComponentItem() == id)
+			shopContents = Interfaces.get(300, 2);
+			if(shopContents!=null){
+				shopItems = shopWindow.getChildren();
+				if(shopItems.length>0)
+				for (RSInterface item : shopItems) {
+					if (item.getComponentItem() == id)
 						return true;
 				}
 			}
@@ -50,17 +56,17 @@ public class Shop {
 	public static boolean buy(int id, int count) {
 		int index = -1;
 		if (Shop.isShopOpen()) {
-			RSInterfaceComponent[] components = Shop.getComponents();
-			if(components!=null){
-				for (int i = 0; i < components.length; i++) {
-					if (components[i].getComponentItem() == id) {
+			shopItems = getComponents();
+			if(shopItems!=null){
+				for (int i = 0; i < shopItems.length; i++) {
+					if (shopItems[i].getComponentItem() == id) {
 						index = i;
 					}
 				}
 				if (index == -1){
 					return false;
 				} else {
-					RSInterfaceComponent c= Interfaces.get(300,2).getChild(index);
+					RSInterface c= shopContents.getChild(index);
 					if (count >= 10) {
 						if (c.click("Buy 10")) {
 						General.sleep(200);
@@ -93,21 +99,27 @@ public class Shop {
 	}
 
 	public static boolean isShopOpen() {
-		return Interfaces.get(300, 2) != null;
+		return Interfaces.isInterfaceValid(300);
 	}
 
 	public String getShopName() {
-		if (Interfaces.get(300, 1) != null)
-			return Interfaces.get(300, 1).getText();
-
+		shopWindow = Interfaces.get(300,1);
+		if(shopWindow == null)
+			return null;
+		RSInterface shopName = shopWindow.getChild(1);
+		if (shopName != null)
+			return shopName.getText();
 		return null;
 	}
 
 	public static boolean close() {
-		if (Interfaces.get(300, 1).getChild(11)!= null) {
-			if (Interfaces.get(300, 1).getChild(11).click("Close")) {
-				General.sleep(600);
-				return true;
+		shopWindow = Interfaces.get(300,1);
+		if(shopWindow == null)
+			return false;
+		RSInterface close = shopWindow.getChild(11);
+		if (close!= null) {
+			if (close.click("Close")) {
+				return Timing.waitCondition(getCondition(false), 6000);
 			}
 		}
 		return false;
@@ -122,74 +134,77 @@ public class Shop {
 
 	public static int getCount(int id)
 	{
-		RSInterfaceChild c=Interfaces.get(300,2);
-		if(c!=null){
-			RSInterfaceComponent[] items = c.getChildren();
-			if(items!=null&&items.length>0)
-			for (RSInterfaceComponent cur: items){
-				if(cur.getComponentItem() == id){
-					return cur.getComponentStack();
+		shopContents = Interfaces.get(300,2);
+		if(shopContents!=null){
+			shopItems = shopContents.getChildren();
+			if(shopItems!=null&&shopItems.length>0)
+			for (RSInterface item: shopItems){
+				if(item.getComponentItem() == id){
+					return item.getComponentStack();
 				}
 			}
 		}
-		return 5;
+		return 0;
 	}
 	
 	public static int getCount(String name)
 	{
-		RSInterfaceChild c=Interfaces.get(300,2);
-		if(c!=null){
-			RSInterfaceComponent[] items = c.getChildren();
-			if(items!=null&&items.length>0)
-			for (RSInterfaceComponent cur: items){
-				if(General.stripFormatting(cur.getComponentName()).equals(name)){
-					return cur.getComponentStack();
+		shopContents = Interfaces.get(300,2);
+		if(shopContents!=null){
+			shopItems = shopContents.getChildren();
+			if(shopItems!=null&&shopItems.length>0){
+				for (RSInterface item: shopItems){
+					if(General.stripFormatting(item.getComponentName()).equals(name)){
+						return item.getComponentStack();
+					}
 				}
 			}
 		}
-		return 5;
+		return 0;
 	}
 
-	public static RSInterfaceComponent[] getComponents() {
-		RSInterfaceChild c = Interfaces.get(300,2);
-		if(c!=null)
-			return c.getChildren();
+	public static RSInterface[] getComponents() {
+		shopContents = Interfaces.get(300,2);
+		if(shopContents!=null)
+			return shopContents.getChildren();
 
 		return null;
 	}
 
 	public static boolean buy(String name, int count) {
 		int index = -1;
-		if (Shop.isShopOpen()) {
-			RSInterfaceComponent[] components = Shop.getComponents();
-			if(components!=null){
-				for (int i = 0; i < components.length; i++) {
-					String itemName = General.stripFormatting(components[i].getComponentName());
-					if (itemName.equals(name)) {
+		if (isShopOpen()) {
+			shopItems = Shop.getComponents();
+			if(shopItems!=null){
+				for (int i = 0; i < shopItems.length; i++) {
+					String itemName = shopItems[i].getComponentName();
+					if(itemName == null)
+						continue;
+					if (General.stripFormatting(itemName).equals(name)) {
 						index = i;
 					}
 				}
 				if (index == -1){
 					return false;
 				} else {
-					RSInterfaceComponent c= Interfaces.get(300,2).getChild(index);
-					if(c == null)
+					RSInterface item = shopWindow.getChild(index);
+					if(item == null)
 						return false;
 					if (count >= 10) {
-						return c.click("Buy 10") && (count-10)>0?buy(name,count-10):true;
+						return item.click("Buy 10") && (count-10)>0?buy(name,count-10):true;
 					} else {
 						if(count ==5) {
-							return c.click("Buy 5");
+							return item.click("Buy 5");
 						} else if(count >5){
-							if(c.click("Buy 5")){
+							if(item.click("Buy 5")){
 								General.sleep(50,200);
 								return buy(name,count-5);
 							}
 						}
 						else{
 							for(int i=0;i<count;i++){
-								c.click("Buy 1");
-								General.sleep(50,200);
+								item.click("Buy 1");
+								General.sleep(50,300);
 							}
 							return true;
 						}
