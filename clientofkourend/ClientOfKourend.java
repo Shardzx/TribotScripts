@@ -380,7 +380,7 @@ public class ClientOfKourend extends EnumScript<State> implements Painting,Argum
 	
 	private State getFeatherState(){
 		int coinsCount = Inventory.getCount(COINS);
-		if(needToBuyFeather || coinsCount >= 2){
+		if(feather.length == 0 && (needToBuyFeather || coinsCount >= 2)){
 			if(coinsCount < 2){
 				if(Banking.isInBank()){
 					if(Banking.isBankScreenOpen()){
