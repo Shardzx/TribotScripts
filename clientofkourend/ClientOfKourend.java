@@ -79,8 +79,6 @@ public class ClientOfKourend extends EnumScript<State> implements Painting,Argum
 									"Sounds interesting! How can I help?"})),
 					VEOS_CHAT_2 = 		new ArrayList<String>(Arrays.asList(new String[]{
 									"Let's talk about your client..."})),
-					VEOS_CHAT_3 =		new ArrayList<String>(Arrays.asList(new String[]{
-									"Let's talk about your client..."})),
 					PISCARILIUS_CHAT = 	new ArrayList<String>(Arrays.asList(new String[]{
 									"Can I ask you about the Piscarilius house?",
 									"How do people start gaining favour in Piscarilius?",
@@ -124,7 +122,8 @@ public class ClientOfKourend extends EnumScript<State> implements Painting,Argum
 	private long			START_TIME,
 					RUNTIME;
 	
-	private boolean			needToBuyFeather = false;
+	private boolean			needToBuyFeather = false,
+					manuallyGetOrb = false;
 	
 	private String			HOUSE_TO_CHOOSE = "Arceuus";
 	
@@ -318,6 +317,18 @@ public class ClientOfKourend extends EnumScript<State> implements Painting,Argum
 			orb = Inventory.find(ORB);
 			myPos = Player.getPosition();
 			if(orb.length == 0){
+				if(manuallyGetOrb){
+					veos = NPCs.find(VEOS_FILTER);
+					if(veos.length > 0){
+						if(isConversing()){
+							return State.CHAT_VEOS_2;
+						} else {
+							return State.TALKING_TO_VEOS;
+						}
+					} else{
+						return State.WALKING_TO_QUEST_START;
+					}
+				}
 				if(BankHelper.isInBank()){
 					if(Banking.isBankScreenOpen()){
 						return State.WITHDRAWING_ORB;
@@ -336,7 +347,7 @@ public class ClientOfKourend extends EnumScript<State> implements Painting,Argum
 			veos = NPCs.find(VEOS_FILTER);
 			if(veos.length > 0){
 				if(isConversing()){
-					return State.CHAT_VEOS_3;
+					return State.CHAT_VEOS_2;
 				} else {
 					return State.TALKING_TO_VEOS;
 				}
@@ -357,7 +368,7 @@ public class ClientOfKourend extends EnumScript<State> implements Painting,Argum
 		case 18374://potential quest setting before getting lamps.
 			lamp = Inventory.find(ANTIQUE_LAMP);
 			if(isConversing()){
-				return State.CHAT_VEOS_3;
+				return State.CHAT_VEOS_2;
 			} else if(questCompleteInterfaceIsOpen()){
 				return State.CLOSING_QUEST_COMPLETE_INTERFACE;//277,17
 			} else if(lamp.length > 1){
@@ -482,9 +493,6 @@ public class ClientOfKourend extends EnumScript<State> implements Painting,Argum
 				NPCChat.clickContinue(true);
 			}
 			break;
-		case CHAT_VEOS_3:
-			skipChat(VEOS_CHAT_3);
-			break;
 		case CHOOSING_HOUSE_FAVOR:
 			NPCChat.selectOption("The " + HOUSE_TO_CHOOSE + " house.",true);
 			NPCInteraction.handleConversation();
@@ -570,7 +578,12 @@ public class ClientOfKourend extends EnumScript<State> implements Painting,Argum
 			walkToArea(SHAYZIEN_SHOP_AREA);
 			break;
 		case WITHDRAWING_COINS:
-			withdraw(2,COINS);
+			if(!withdraw(2,COINS)){
+				if(EzBanking.areItemsLoaded() && EzBanking.getTotalCount(COINS) < 2){
+					println("Failed to withdraw 2 coins, please post a bug report if this is incorrect.");
+					return null;
+				}
+			}
 			break;
 		case WITHDRAWING_ENCHANTED_SCROLL:
 			withdraw(1,ENCHANTED_SCROLL);
@@ -579,7 +592,12 @@ public class ClientOfKourend extends EnumScript<State> implements Painting,Argum
 			withdraw(1,FEATHER);
 			break;
 		case WITHDRAWING_ORB:
-			withdraw(1,ORB);
+			if(!withdraw(1,ORB)){
+				if(EzBanking.areItemsLoaded() && EzBanking.getTotalCount(ORB) == 0){
+					println("Failed to withdraw orb, going to get it from Veos.");
+					manuallyGetOrb = true;
+				}
+			}
 			break;	
 		default:
 			break;
