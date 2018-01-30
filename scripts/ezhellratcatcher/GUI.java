@@ -17,7 +17,7 @@ import java.util.List;
 public class GUI extends JFrame {
 
     /**
-     *
+     * All images/game sprites are property of Jagex Ltd.
      */
     public boolean isCompleted = false;
 

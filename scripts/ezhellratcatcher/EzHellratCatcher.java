@@ -12,7 +12,10 @@ import org.tribot.script.interfaces.MessageListening07;
 import org.tribot.script.interfaces.Painting;
 import scripts.Node;
 import scripts.Utilities.ACamera;
-import scripts.ezhellratcatcher.Nodes.*;
+import scripts.ezhellratcatcher.Nodes.Banker;
+import scripts.ezhellratcatcher.Nodes.Battler;
+import scripts.ezhellratcatcher.Nodes.CatManager;
+import scripts.ezhellratcatcher.Nodes.Catcher;
 
 import java.awt.*;
 import java.util.ArrayList;

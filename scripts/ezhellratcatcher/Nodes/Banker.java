@@ -65,12 +65,14 @@ public class Banker extends Node{
                 }
                 break;
             case WITHDRAWING_CAT:
-                if(EzBanking.withdraw(1,true,Const.CAT_NAMES)){
-                    Timing.waitCondition(EzConditions.inventoryChange(true), 2500);
+                if(!EzBanking.withdraw(1,true,Const.CAT_NAMES)){
+                    checkBank();
                 }
                 break;
             case WITHDRAWING_CAT_FOOD:
-                EzBanking.withdraw(Vars.withdrawAmount,true,Vars.catFoodFilter);
+                if(!EzBanking.withdraw(Vars.withdrawAmount,true,Vars.catFoodFilter)){
+                    checkBank();
+                }
                 break;
             default:
                 break;
@@ -177,4 +179,15 @@ public class Banker extends Node{
     public String toString(){
         return state != null ? state.toString() : "";
     }
+
+    public void checkBank(){
+        if(EzBanking.areItemsLoaded()){
+            if((Vars.shouldManageKitten || Vars.battleMode) && Banking.find(Vars.catFoodFilter).length == 0){
+                Vars.running = false;
+            } else if(!hasFoundCat && Banking.find(Const.CAT_NAMES).length == 0){
+                Vars.running = false;
+            }
+        }
+    }
+
 }
