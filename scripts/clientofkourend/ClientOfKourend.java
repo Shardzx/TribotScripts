@@ -1,45 +1,30 @@
-package scripts.ezquests.clientofkourend;
-
-import java.awt.Color;
-import java.awt.Graphics;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+package scripts.clientofkourend;
 
 import org.tribot.api.General;
 import org.tribot.api.Timing;
 import org.tribot.api.types.generic.Filter;
-import org.tribot.api2007.Banking;
-import org.tribot.api2007.Game;
-import org.tribot.api2007.Interfaces;
-import org.tribot.api2007.Inventory;
-import org.tribot.api2007.Login;
-import org.tribot.api2007.NPCChat;
-import org.tribot.api2007.NPCs;
-import org.tribot.api2007.PathFinding;
-import org.tribot.api2007.Player;
-import org.tribot.api2007.Skills;
+import org.tribot.api2007.*;
 import org.tribot.api2007.ext.Filters;
-import org.tribot.api2007.types.RSArea;
-import org.tribot.api2007.types.RSInterface;
-import org.tribot.api2007.types.RSItem;
-import org.tribot.api2007.types.RSNPC;
-import org.tribot.api2007.types.RSTile;
+import org.tribot.api2007.types.*;
 import org.tribot.script.EnumScript;
 import org.tribot.script.Script;
 import org.tribot.script.ScriptManifest;
 import org.tribot.script.interfaces.Arguments;
 import org.tribot.script.interfaces.Painting;
-
 import scripts.Utilities.ACamera;
 import scripts.Utilities.EzConditions;
-import scripts.ezquests.clientofkourend.utils.Shop;
+import scripts.Utilities.Shop;
 import scripts.webwalker_logic.WebWalker;
 import scripts.webwalker_logic.local.walker_engine.interaction_handling.InteractionHelper;
 import scripts.webwalker_logic.local.walker_engine.interaction_handling.NPCInteraction;
 import scripts.webwalker_logic.local.walker_engine.local_pathfinding.Reachable;
 import scripts.webwalker_logic.shared.helpers.BankHelper;
+
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 
 @ScriptManifest(authors= {"FALSkills"}, category= "Quests", name= "Client of Kourend")
 public class ClientOfKourend extends EnumScript<State> implements Painting,Arguments{
@@ -59,12 +44,12 @@ public class ClientOfKourend extends EnumScript<State> implements Painting,Argum
 							COINS = "Coins",
 							GERRANT = "Gerrant",
 							ANTIQUE_LAMP = "Antique lamp";
-	
+
 	private final int	QUEST_COMPLETE_MASTER = 277,
 						QUEST_COMPLETE_CHILD = 17,
 						LAMP_MASTER = 134,
 						LAMP_CONFIRM = 26;
-							
+
 	private final RSArea	QUEST_START_AREA = new RSArea(new RSTile(1821,3691,0),new RSTile(1826,3685,0)),
 				PISCARILIUS_SHOP_AREA = new RSArea(new RSTile(1803,3723,0),new RSTile(1808,3728,0)),
 				HOSIDIUS_SHOP_AREA = new RSArea(new RSTile(1667,3624,0),new RSTile(1673,3615,0)),
@@ -105,9 +90,9 @@ public class ClientOfKourend extends EnumScript<State> implements Painting,Argum
 	private ACamera			acamera;
 	
 	private Script			callingScript;
-	
+
 	private final int		GAME_SETTING = 1566;
-	
+
 	public int			currentStep;
 	
 	private RSItem[]		feather,
@@ -123,7 +108,7 @@ public class ClientOfKourend extends EnumScript<State> implements Painting,Argum
 	
 	private long			START_TIME,
 					RUNTIME;
-	
+
 	private boolean			needToBuyFeather = false;
 	
 	private String			HOUSE_TO_CHOOSE = "Arceuus";

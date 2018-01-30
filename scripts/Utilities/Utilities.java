@@ -20,6 +20,8 @@ public class Utilities {
 
     public static boolean[] indices = new boolean[28];
 
+    private static Rectangle[] inventoryRectangles;
+
     public static boolean   shouldWaitForDropping = true;
 
     public static boolean isConversing(){
@@ -149,5 +151,160 @@ public class Utilities {
         }
         Collections.shuffle(solution);
         return solution.toArray(arr);
+    }
+
+    public static boolean enterAmountMenuUp() {
+        return Screen.getColorAt(new Point(260, 429)).equals(
+                new Color(0, 0, 128))||Screen.getColorAt(new Point(263, 429)).equals(
+                new Color(0, 0, 128));
+    }
+
+    public static void misclick(){
+        Mouse.click(General.random(740,760),General.random(50,400),1);
+        General.sleep(20,40);
+    }
+
+    public static boolean hasInterface(int m){
+        return Interfaces.isInterfaceValid(m);
+    }
+    public static boolean hasInterfaces(int... m){
+        for(int i:m){
+            if(hasInterface(i)){
+                return true;
+            }
+        }
+        return false;
+    }
+    public static boolean hasInterface(int m,int c){
+        return Interfaces.get(m,c)!=null;
+    }
+    public static RSInterface getInterface(int m){
+        RSInterface i = Interfaces.get(m);
+        return i != null ? i : null;
+    }
+    public static RSInterface getInterface(int m,int c){
+        RSInterface i = Interfaces.get(m,c);
+        return i != null ? i : null;
+    }
+
+    public static boolean areUnwantedInterfacesOpen(){
+        return hasInterfaces(345,193,229,233,84,464,102,214,400,402,382,310,553,451);
+    }
+    public static boolean closeUnwantedInterfaces(){
+        RSInterface close;
+        if(hasInterface(345)){
+            close = getInterface(345,1);
+            if(close == null || close.getChildren() == null){
+                close = getInterface(345,2);
+            }
+            if(close != null){
+                close = close.getChild(11);
+                return close != null && close.click();
+            }
+        } else if(hasInterface(193)){
+            close = getInterface(193,2);
+            return close != null && close.click();
+        } else if(hasInterface(229)){
+            close = getInterface(229,1);
+            return close != null && close.click();
+        } else if(hasInterface(233)){
+            close = getInterface(233,2);
+            return close != null && close.click();
+        } else if(hasInterface(84)){
+            close = getInterface(84,4);
+            return close != null && close.click();
+        } else if(hasInterface(464)){
+            close = getInterface(464,1);
+            if(close != null){
+                close = close.getChild(3);
+                return close != null && close.click();
+            }
+        } else if(hasInterface(102)){
+            close = getInterface(102,7);
+            return close != null && close.click();
+        } else if(hasInterface(214)){
+            close = getInterface(214,25);
+            return close != null && close.click();
+        } else if(hasInterface(400)){
+            close = getInterface(400,2);
+            if(close != null){
+                close = close.getChild(3);
+                return close != null && close.click();
+            }
+        } else if(hasInterface(402)){
+            close = getInterface(400,2);
+            if(close != null){
+                close = close.getChild(11);
+                return close != null && close.click();
+            }
+        } else if(hasInterface(382)){
+            close = getInterface(382,18);
+            return close != null && close.click();
+        } else if(hasInterface(310)){
+            close = getInterface(310,1);
+            if(close == null || close.getChildren() == null){
+                close = getInterface(310,2);
+            }
+            if(close != null){
+                close = close.getChild(11);
+                return close != null && close.click();
+            }
+        } else if(hasInterface(553)){
+            close = getInterface(553,1);
+            if(close != null){
+                close = close.getChild(11);
+                return close != null && close.click();
+            }
+        } else if(hasInterface(451)){
+            close = getInterface(451,1);
+            if(close != null){
+                close = close.getChild(11);
+                return close != null && close.click();
+            }
+        }
+        return false;
+    }
+
+    public static Rectangle getClosestEmptyInventorySlot(){
+        return getClosestRectangle(getEmptyInventorySlots());
+    }
+
+    public static Rectangle getClosestRectangle(Rectangle... rectangles){
+        Point myMouse = Mouse.getPos();
+        int closest = 1000;
+        Rectangle output = null;
+        for(Rectangle r:rectangles){
+            int current = (int) new Point((int)r.getCenterX(),(int)r.getCenterY()).distance(myMouse);
+            if(current < closest){
+                output = r;
+                closest = current;
+            }
+        }
+        return output;
+    }
+
+    public static Rectangle[] getEmptyInventorySlots(){
+        if(inventoryRectangles == null)
+            buildRectangles();
+        RSItem[] inv = Inventory.getAll();
+        List<Integer> containingIndices = new ArrayList<Integer>();
+        for(RSItem i:inv){
+            containingIndices.add(i.getIndex());
+        }
+        List<Rectangle> output = new ArrayList<Rectangle>();
+        for(int i=0;i<28;i++){
+            if(!containingIndices.contains(i)){
+                output.add(inventoryRectangles[i]);
+            }
+        }
+        return output.toArray(new Rectangle[output.size()]);
+    }
+
+    private static void buildRectangles(){
+        inventoryRectangles = new Rectangle[28];
+        for(int i=0;i<28;i++){
+            RSItem item = new RSItem(i,1,1,RSItem.TYPE.INVENTORY);
+            inventoryRectangles[i] = item.getArea();
+        }
     }
 }

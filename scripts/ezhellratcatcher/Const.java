@@ -37,9 +37,9 @@ public class Const {
         BROWN(new RSArea(new RSTile(3081, 9877, 0), new RSTile(3084, 9875, 0)), Filters.Objects.nameEquals("Curtain").combine(Filters.Objects.tileEquals(new RSTile(3082, 9878, 0)), false));
 
         public RSArea area;
-        Filter<RSObject> curtain;
+        public Filter<RSObject> curtain;
 
-        private COLOR(RSArea area, Filter<RSObject> curtain) {
+        COLOR(RSArea area, Filter<RSObject> curtain) {
             this.area = area;
             this.curtain = curtain;
         }
