@@ -41,7 +41,11 @@ public class CatManager extends Node {
                     General.sleep(400, 800);
                 }
             }
-        } else {
+        } else {//TODO get message for cat is lonely/wants to play, set boolean to stroke cat.
+            if(Vars.npcCat[0].getName().contains("cat")){
+                General.println("We have a cat following us! Ending idle mode.");
+                Vars.running = false;
+            }
             if(Mouse.isInBounds()) {
                 Vars.idleActions();
             } else if(Vars.abc_util.shouldLeaveGame()){
@@ -53,7 +57,7 @@ public class CatManager extends Node {
 
     @Override
     public String toString() {
-        return "FEEDING CAT";
+        return "Cat Manager";
     }
 
 }

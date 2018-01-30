@@ -37,15 +37,7 @@ public class EzHellratCatcher extends Script implements MessageListening07,Argum
         g.drawString("EzHellratCatcher", 5, 50);
         g.drawString("Time running: " + Timing.msToString(runtime), 5, 70);
         if(currentNode == null){
-            if(Vars.idleKittenOnly){
-                g.drawString("Waiting to feed kitten.", 5, 90);
-                return;
-            } else{
-                g.drawString("Waiting for GUI to be completed.", 5, 90);
-            }
-        } else if(Vars.idleKittenOnly){
-            g.drawString("Waiting to feed kitten.", 5, 90);
-            return;
+            g.drawString("Waiting for GUI to be completed.", 5, 90);
         } else {
             g.drawString("State: " + currentNode.toString(),5,90);
         }
