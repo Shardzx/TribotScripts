@@ -93,7 +93,7 @@ public class EzHellratCatcher extends Script implements MessageListening07,Argum
     public void playerMessageReceived(String arg0, String arg1) {
         if(arg0.equals(Vars.myName)){
             if(arg1.contains("Go on puss")){
-                Vars.lastHuntedRat = Timing.currentTimeMillis(); //Update the last time we tried to catch one.
+                Vars.lastAction = Timing.currentTimeMillis(); //Update the last time we tried to catch one.
             } else if(arg1.contains("Hey well done")){
                 Vars.miceCaught++;
                 Vars.numberFailed = 0; //Reset the failed counter upon successfully catching one.
@@ -104,7 +104,7 @@ public class EzHellratCatcher extends Script implements MessageListening07,Argum
     @Override
     public void serverMessageReceived(String arg0) {
         if(arg0.contains("Your cat cannot")){ //Cat can't reach, increments a counter to make sure we don't get stuck.
-            Vars.lastHuntedRat = 0;
+            Vars.lastAction = 0;
             if(Timing.timeFromMark(Vars.lastFailedHuntingRat)<20000){
                 Vars.numberFailed++;
                 if(Vars.numberFailed >= 3){

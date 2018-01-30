@@ -50,7 +50,7 @@ public class Vars {
             nextEat = 0;
 
     public static long 		START_TIME,
-            lastHuntedRat = 0,
+            lastAction = 0,
             totalHuntingTime = 0,
             lastFailedHuntingRat = 0,
             lastInspectedGroundItems = 0;
@@ -177,7 +177,7 @@ public class Vars {
     }
 
     public static void generateWaitingTime(){
-        final int waiting_time=(int) (lastHuntedRat > 0 ? Timing.timeFromMark(lastHuntedRat) : 6000);
+        final int waiting_time=(int) (lastAction > 0 ? Timing.timeFromMark(lastAction) : 6000);
         totalHuntingTime+=waiting_time;
         shouldHover=abc_util.shouldHover();
         menuOpen=shouldHover&&abc_util.shouldOpenMenu();

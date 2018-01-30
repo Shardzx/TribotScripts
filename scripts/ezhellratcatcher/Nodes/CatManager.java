@@ -2,6 +2,7 @@ package scripts.ezhellratcatcher.Nodes;
 
 import org.tribot.api.General;
 import org.tribot.api.Timing;
+import org.tribot.api.input.Mouse;
 import org.tribot.api.types.generic.Condition;
 import org.tribot.api2007.Game;
 import org.tribot.api2007.Player;
@@ -15,7 +16,7 @@ public class CatManager extends Node {
 
     @Override
     public boolean validate() {
-        return Vars.shouldManageKitten && Vars.catIsHungry;
+        return Vars.shouldManageKitten && Vars.catIsHungry || Vars.idleKittenOnly;
     }
 
     @Override
@@ -23,20 +24,30 @@ public class CatManager extends Node {
         if (Player.getPosition().distanceTo(Vars.npcCat[0]) > 7 &&
                 Vars.callFollower()) {
             Timing.waitCondition(EzConditions.npcAppeared(Const.CATS), 5000);
-        }
-        if ((Game.isUptext("->") || Vars.catFood[0].click("Use")) &&
-                AccurateMouse.click(Vars.npcCat[0], "Use " + Vars.catFood[0].getDefinition().getName() + " ->")) {
-            if (Timing.waitCondition(new Condition() {
+        }if(Vars.catIsHungry ){
+            Vars.generateWaitingTime();
+            if ((Game.isUptext("->") || Vars.catFood[0].click("Use")) &&
+                    AccurateMouse.click(Vars.npcCat[0], "Use " + Vars.catFood[0].getDefinition().getName() + " ->")) {
+                if (Timing.waitCondition(new Condition() {
 
-                @Override
-                public boolean active() {
-                    General.sleep(100);
-                    return Player.getAnimation() != -1;
+                    @Override
+                    public boolean active() {
+                        General.sleep(100);
+                        return Player.getAnimation() != -1;
+                    }
+
+                }, 6000)) {
+                    Vars.generateWaitingTime();
+                    General.sleep(400, 800);
                 }
-
-            }, 6000)) {
-                General.sleep(400, 800);
             }
+        } else {
+            if(Mouse.isInBounds()) {
+                Vars.idleActions();
+            } else if(Vars.abc_util.shouldLeaveGame()){
+                Vars.abc_util.leaveGame();
+            }
+            General.sleep(1000, 1500);
         }
     }
 

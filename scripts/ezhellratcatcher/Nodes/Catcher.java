@@ -83,7 +83,7 @@ public class Catcher extends Node{
                 enterBasement();
                 break;
             case INTERACTING_WITH_CAT:
-                if((Vars.miceCaught > 0 || Vars.lastHuntedRat != 0) && !Mouse.isInBounds()){
+                if((Vars.miceCaught > 0 || Vars.lastAction != 0) && !Mouse.isInBounds()){
                     Vars.generateWaitingTime();
                 }
                 if(isConversing() || (ChooseOption.isOpen() && ChooseOption.select("Chase")) ||
@@ -317,7 +317,7 @@ public class Catcher extends Node{
             @Override
             public boolean active() {
                 General.sleep(100,200);
-                return Timing.timeFromMark(Vars.lastHuntedRat) < 2500;
+                return Timing.timeFromMark(Vars.lastAction) < 2500;
             }
 
         };
