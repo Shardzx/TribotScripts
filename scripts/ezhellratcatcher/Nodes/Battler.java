@@ -21,6 +21,8 @@ import scripts.ezhellratcatcher.Vars;
 import scripts.webwalker_logic.WebWalker;
 import scripts.webwalker_logic.local.walker_engine.interaction_handling.AccurateMouse;
 
+import java.awt.*;
+
 public class Battler extends Node {
 
 
@@ -279,8 +281,11 @@ public class Battler extends Node {
                 Clicking.click(Player.getPosition());
             } else if(rng > 70){//click chatbox.
                 Mouse.clickBox(1, 345, 515, 470, 1);
-            } else if(rng > 50){//click empty inventory slot
-                Mouse.clickBox(Utilities.getClosestEmptyInventorySlot(), 1);
+            } else if(!Inventory.isFull() && rng > 50){//click empty inventory slot
+                Rectangle rect = Utilities.getClosestEmptyInventorySlot();
+                if(rect != null) {
+                    Mouse.clickBox(rect, 1);
+                }
             } else {//click blank spots in inventory
                 Utilities.misclick();
             }

@@ -77,6 +77,7 @@ public class Vars {
             shiftDrop = false,
             shouldManageKitten = false,
             catIsHungry = false,
+            catWantsAttention = false,
             red = true,
             yellow = true,
             brown = true,

@@ -109,6 +109,11 @@ public class EzHellratCatcher extends Script implements MessageListening07,Argum
             Vars.catIsHungry = true;
         } else if(arg0.contains("gobbles up")){
             Vars.catIsHungry = false;
+        } else if(arg0.contains("Your kitten wants attention.")){
+            println("Cat is lonely! :(");
+            Vars.catWantsAttention = true;
+        } else if(arg0.equals("You softly stroke your cat.")){
+            Vars.catWantsAttention = false;
         }
     }
 

@@ -5,6 +5,7 @@ import org.tribot.api.Timing;
 import org.tribot.api.input.Mouse;
 import org.tribot.api.types.generic.Condition;
 import org.tribot.api2007.Game;
+import org.tribot.api2007.NPCChat;
 import org.tribot.api2007.Player;
 import scripts.Node;
 import scripts.Utilities.EzConditions;
@@ -41,10 +42,31 @@ public class CatManager extends Node {
                     General.sleep(400, 800);
                 }
             }
-        } else {//TODO get message for cat is lonely/wants to play, set boolean to stroke cat.
+        } else if(Vars.catWantsAttention){
+            Vars.generateWaitingTime();
+            if(NPCChat.getOptions() == null){
+                if(AccurateMouse.click(Vars.npcCat[0],"Interact")){
+                    Timing.waitCondition(EzConditions.isConversing(),6000);
+                }
+            }
+            if(NPCChat.getOptions() != null){
+                if(NPCChat.selectOption("Stroke",true)){
+                    Timing.waitCondition(new Condition() {
+                        @Override
+                        public boolean active() {
+                            General.sleep(100);
+                            return !Vars.catWantsAttention;
+                        }
+                    },3000);
+                }
+            }
+        } else {
             if(Vars.npcCat[0].getName().contains("cat")){
                 General.println("We have a cat following us! Ending idle mode.");
                 Vars.running = false;
+            }
+            if(NPCChat.getClickContinueInterface() != null){
+                NPCChat.clickContinue(true);
             }
             if(Mouse.isInBounds()) {
                 Vars.idleActions();
