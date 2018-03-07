@@ -22,61 +22,37 @@ public class GUI extends JFrame {
     public boolean isCompleted = false;
 
     private static final long serialVersionUID = -5624161068204250091L;
-    private JPanel contentPane;
-    private JCheckBox brownAll,
-            brown4,
-            brown3,
-            brown2,
-            brown1,
-            redAll,
-            red4,
-            red3,
-            red2,
-            red1,
-            yellowAll,
-            yellow4,
-            yellow3,
-            yellow2,
-            yellow1,
-            orangeAll,
-            orange4,
-            orange3,
-            orange2,
-            orange1;
-    private JSlider slider;
-    private JCheckBox manageKitten;
-    public JButton startCatcherButton;
-    public JTabbedPane tabbedPane;
-    public JPanel panel;
-    public JPanel panel_1;
-    public JLabel lblBrownSpice,
-            lblRedSpice,
-            lblOrangeSpice,
-            lblYellowSpice,
-            lblBrownSpice2,
-            lblRedSpice2,
-            lblOrangeSpice2,
-            lblYellowSpice2;
-    public JRadioButton battlerBrown;
-    public JRadioButton battlerOrange;
-    public JRadioButton battlerYellow;
-    public JRadioButton battlerRed;
-    public JPanel panel_2;
-    public JLabel label;
-    public JTextField foodNames;
-    public JTextField numFoodToWithdraw;
-    public JLabel label_1;
-    public JLabel lblBattlerFight;
-    public JLabel catGif;
-    public JCheckBox chckbxUseAbcEat;
-    public JSlider eatAtSlider;
-    public JLabel lblOr;
-    public JLabel lblKittenIdler;
-    public JCheckBox kittenIdlerBox;
-    private final ButtonGroup buttonGroup = new ButtonGroup();
-    public JLabel behemothLabel;
-    public JLabel hellcatLabel;
-    public JButton startBattlerButton;
+    private final JCheckBox brownAll;
+    private final JCheckBox brown4;
+    private final JCheckBox brown3;
+    private final JCheckBox brown2;
+    private final JCheckBox brown1;
+    private final JCheckBox redAll;
+    private final JCheckBox red4;
+    private final JCheckBox red3;
+    private final JCheckBox red2;
+    private final JCheckBox red1;
+    private final JCheckBox yellowAll;
+    private final JCheckBox yellow4;
+    private final JCheckBox yellow3;
+    private final JCheckBox yellow2;
+    private final JCheckBox yellow1;
+    private final JCheckBox orangeAll;
+    private final JCheckBox orange4;
+    private final JCheckBox orange3;
+    private final JCheckBox orange2;
+    private final JCheckBox orange1;
+    private final JSlider slider;
+    private final JCheckBox manageKitten;
+    private final JRadioButton battlerBrown;
+    private final JRadioButton battlerOrange;
+    private final JRadioButton battlerYellow;
+    private final JRadioButton battlerRed;
+    private final JTextField foodNames;
+    private final JTextField numFoodToWithdraw;
+    private final JCheckBox chckbxUseAbcEat;
+    private final JSlider eatAtSlider;
+    private final JCheckBox kittenIdlerBox;
 
     /**
      * Launch the application.
@@ -103,32 +79,32 @@ public class GUI extends JFrame {
         this.setVisible(true);
         setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         setBounds(100, 100, 450, 300);
-        contentPane = new JPanel();
+        JPanel contentPane = new JPanel();
         contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
         setContentPane(contentPane);
         contentPane.setLayout(null);
 
-        tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+        JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
         tabbedPane.setBounds(0, 0, 434, 261);
         contentPane.add(tabbedPane);
 
-        panel = new JPanel();
+        JPanel panel = new JPanel();
         tabbedPane.addTab("Catcher", null, panel, null);
         panel.setLayout(null);
 
-        lblBrownSpice = new JLabel();
+        JLabel lblBrownSpice = new JLabel();
         lblBrownSpice.setBounds(29, 26, 19, 28);
         panel.add(lblBrownSpice);
 
-        lblRedSpice = new JLabel();
+        JLabel lblRedSpice = new JLabel();
         lblRedSpice.setBounds(29, 55, 19, 28);
         panel.add(lblRedSpice);
 
-        lblYellowSpice = new JLabel();
+        JLabel lblYellowSpice = new JLabel();
         lblYellowSpice.setBounds(29, 84, 19, 28);
         panel.add(lblYellowSpice);
 
-        lblOrangeSpice = new JLabel();
+        JLabel lblOrangeSpice = new JLabel();
         lblOrangeSpice.setBounds(29, 114, 19, 28);
         panel.add(lblOrangeSpice);
 
@@ -264,16 +240,16 @@ public class GUI extends JFrame {
         slider.setMinimum(75);
         slider.setPaintLabels(true);
 
-        startCatcherButton = new JButton("START CATCHER");
+        JButton startCatcherButton = new JButton("START CATCHER");
         startCatcherButton.setBounds(298, 176, 125, 23);
         panel.add(startCatcherButton);
 
-        catGif = new JLabel("");
+        JLabel catGif = new JLabel("");
         catGif.setBounds(263, 61, 131, 102);
         catGif.setIcon(new ImageIcon(EzPaint.downloadImageFile("https://vignette.wikia.nocookie.net/2007scape/images/2/29/Cat.gif")));
         panel.add(catGif);
 
-        lblKittenIdler = new JLabel("Kitten idler?");
+        JLabel lblKittenIdler = new JLabel("Kitten idler?");
         lblKittenIdler.setBounds(248, 54, 70, 14);
         panel.add(lblKittenIdler);
 
@@ -355,23 +331,23 @@ public class GUI extends JFrame {
 
         });
 
-        panel_1 = new JPanel();
+        JPanel panel_1 = new JPanel();
         tabbedPane.addTab("Battler", null, panel_1, null);
         panel_1.setLayout(null);
 
-        lblBrownSpice2 = new JLabel();
+        JLabel lblBrownSpice2 = new JLabel();
         lblBrownSpice2.setBounds(10, 23, 19, 28);
         panel_1.add(lblBrownSpice2);
 
-        lblRedSpice2 = new JLabel();
+        JLabel lblRedSpice2 = new JLabel();
         lblRedSpice2.setBounds(10, 52, 19, 28);
         panel_1.add(lblRedSpice2);
 
-        lblOrangeSpice2 = new JLabel();
+        JLabel lblOrangeSpice2 = new JLabel();
         lblOrangeSpice2.setBounds(10, 110, 19, 28);
         panel_1.add(lblOrangeSpice2);
 
-        lblYellowSpice2 = new JLabel();
+        JLabel lblYellowSpice2 = new JLabel();
         lblYellowSpice2.setBounds(10, 81, 19, 28);
         panel_1.add(lblYellowSpice2);
 
@@ -381,6 +357,7 @@ public class GUI extends JFrame {
         lblYellowSpice2.setIcon(new ImageIcon(EzPaint.downloadImageFile("https://vignette.wikia.nocookie.net/2007scape/images/6/6f/Yellow_spice_4.png")));
 
         battlerBrown = new JRadioButton("");
+        ButtonGroup buttonGroup = new ButtonGroup();
         buttonGroup.add(battlerBrown);
         battlerBrown.setBounds(38, 28, 21, 21);
         panel_1.add(battlerBrown);
@@ -400,7 +377,7 @@ public class GUI extends JFrame {
         battlerRed.setBounds(38, 59, 21, 21);
         panel_1.add(battlerRed);
 
-        lblBattlerFight = new JLabel("Battler - fight Hell-Rat Behemoths after saving Evil Dave");
+        JLabel lblBattlerFight = new JLabel("Battler - fight Hell-Rat Behemoths after saving Evil Dave");
         lblBattlerFight.setFont(new Font("Tahoma", Font.PLAIN, 14));
         lblBattlerFight.setBounds(38, 0, 337, 17);
         panel_1.add(lblBattlerFight);
@@ -419,21 +396,21 @@ public class GUI extends JFrame {
         eatAtSlider.setBounds(135, 100, 200, 45);
         panel_1.add(eatAtSlider);
 
-        lblOr = new JLabel("OR feed cat at health:");
+        JLabel lblOr = new JLabel("OR feed cat at health:");
         lblOr.setBounds(179, 81, 120, 14);
         panel_1.add(lblOr);
 
-        behemothLabel = new JLabel();
+        JLabel behemothLabel = new JLabel();
         behemothLabel.setBounds(118, 151, 178, 73);
         behemothLabel.setIcon(new ImageIcon(new ImageIcon(EzPaint.downloadImageFile("https://vignette.wikia.nocookie.net/2007scape/images/d/dc/Hell-Rat_Behemoth.png")).getImage().getScaledInstance(178, 73, Image.SCALE_DEFAULT)));
         panel_1.add(behemothLabel);
 
-        hellcatLabel = new JLabel("");
+        JLabel hellcatLabel = new JLabel("");
         hellcatLabel.setBounds(20, 136, 74, 88);
         hellcatLabel.setIcon(new ImageIcon(EzPaint.downloadImageFile("https://vignette.wikia.nocookie.net/2007scape/images/2/2b/Hellcat.png")));
         panel_1.add(hellcatLabel);
 
-        startBattlerButton = new JButton("START BATTLER");
+        JButton startBattlerButton = new JButton("START BATTLER");
         startBattlerButton.setBounds(298, 176, 121, 23);
         panel_1.add(startBattlerButton);
 
@@ -445,11 +422,11 @@ public class GUI extends JFrame {
             }
         });
 
-        panel_2 = new JPanel();
+        JPanel panel_2 = new JPanel();
         tabbedPane.addTab("Food", null, panel_2, null);
         panel_2.setLayout(null);
 
-        label = new JLabel("# of food to withdraw:");
+        JLabel label = new JLabel("# of food to withdraw:");
         label.setBounds(85, 62, 120, 14);
         panel_2.add(label);
 
@@ -464,12 +441,12 @@ public class GUI extends JFrame {
         numFoodToWithdraw.setBounds(206, 59, 146, 20);
         panel_2.add(numFoodToWithdraw);
 
-        label_1 = new JLabel("<html>Food name(s),<br>spell correctly and<br>separate with comma</html>");
+        JLabel label_1 = new JLabel("<html>Food name(s),<br>spell correctly and<br>separate with comma</html>");
         label_1.setBounds(85, 97, 150, 50);
         panel_2.add(label_1);
     }
 
-    public void passCatcherSettings() {
+    private void passCatcherSettings() {
         List<String> spicesToLoot = new ArrayList<String>();
         String base = "Brown spice ";
         if (brownAll.isSelected()) {
@@ -566,7 +543,7 @@ public class GUI extends JFrame {
         passFoodSettings();
     }
 
-    public void passBattlerSettings() {
+    private void passBattlerSettings() {
         Vars.battleMode = true;
         if (!chckbxUseAbcEat.isSelected()) {
             Vars.abc2eat = false;
@@ -587,11 +564,10 @@ public class GUI extends JFrame {
         }
         if (battlerRed.isSelected()) {
             Vars.color = Const.COLOR.RED;
-            return;
         }
     }
 
-    public void passFoodSettings() {
+    private void passFoodSettings() {
         String names = foodNames.getText();
         if (names != null && names.length() > 0) {
             try {
@@ -610,7 +586,7 @@ public class GUI extends JFrame {
         }
     }
 
-    public void close() {
+    private void close() {
         isCompleted = true;
         this.dispose();
     }

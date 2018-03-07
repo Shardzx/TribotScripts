@@ -6,6 +6,7 @@ import org.tribot.api.Timing;
 import org.tribot.api.types.generic.Condition;
 import org.tribot.api2007.*;
 import org.tribot.api2007.ext.Filters;
+import org.tribot.api2007.types.RSItem;
 import scripts.Node;
 import scripts.Utilities.EzBanking;
 import scripts.Utilities.EzConditions;
@@ -15,9 +16,9 @@ import scripts.webwalker_logic.WebWalker;
 
 public class Banker extends Node{
 
-    State state;
+    private State state;
 
-    boolean hasFoundCat, needToWithdrawFood, inventoryIsFull, needToDeposit;
+    private boolean hasFoundCat, needToWithdrawFood, inventoryIsFull, needToDeposit;
 
     @Override
     public void execute() {
@@ -39,9 +40,7 @@ public class Banker extends Node{
                 }
                 break;
             case CLOSING_BANK:
-                if(Banking.close()){
-                    Timing.waitCondition(EzConditions.bankIsClosed(), 6000);
-                }
+                EzBanking.close(true);
                 break;
             case DEPOSITING_ALL:
                 EzBanking.depositAll(true);
@@ -55,9 +54,7 @@ public class Banker extends Node{
                 exitBasement();
                 break;
             case OPENING_BANK:
-                if(Banking.openBank()){
-                    Timing.waitCondition(EzConditions.bankIsOpen(), 6000);
-                }
+                EzBanking.open(true);
                 break;
             case WALKING_TO_BANK:
                 if(WebWalker.walkToBank()){
@@ -86,15 +83,19 @@ public class Banker extends Node{
         hasFoundCat = Vars.hasFoundCat();
         Vars.inventorySpices = Inventory.find(Filters.Items.nameContains("spice ("));
         Vars.catFood = Inventory.find(Vars.catFoodFilter);
+        Vars.foodCount = 0;
+        for(RSItem food:Vars.catFood){
+            Vars.foodCount += food.getStack();
+        }
         if(!hasFoundCat)
             return true;
         if(Vars.battleMode){
-            needToWithdrawFood = (Vars.catFood.length < 4 && !Battler.isBattling()) || (Vars.catFood.length == 0 && Vars.npcCat[0].getHealthPercent() <= .5);
+            needToWithdrawFood = (Vars.foodCount < 4 && !Battler.isBattling()) || (Vars.foodCount == 0 && Vars.npcCat[0].getHealthPercent() <= .5);
             needToDeposit = EzBanking.isInBank() && Vars.inventorySpices.length > 0;
             return needToWithdrawFood || needToDeposit;
         }
         if(Vars.shouldManageKitten){
-            needToWithdrawFood = Vars.catFood.length == 0;
+            needToWithdrawFood = Vars.foodCount == 0;
             if(needToWithdrawFood){
                 return true;
             }
@@ -106,7 +107,7 @@ public class Banker extends Node{
         if(inventoryIsFull)
             return true;
         needToDeposit = EzBanking.isInBank() &&
-                (Vars.inventorySpices.length > 0 || (Vars.shouldManageKitten ? false : Vars.catFood.length > 0));
+                (Vars.inventorySpices.length > 0 || (!Vars.shouldManageKitten && Vars.foodCount > 0));
         return needToDeposit;
 //		return !Vars.hasCat() || Inventory.isFull() || (BankHelper.isInBank() &&
 //				Inventory.getAll().length > Inventory.find(Const.CAT_NAMES).length + (Vars.shouldManageCat ? Vars.catFood.length : 0));
@@ -180,7 +181,7 @@ public class Banker extends Node{
         return state != null ? state.toString() : "";
     }
 
-    public void checkBank(){
+    private void checkBank(){
         if(EzBanking.areItemsLoaded()){
             if((Vars.shouldManageKitten || Vars.battleMode) && Banking.find(Vars.catFoodFilter).length == 0){
                 Vars.running = false;

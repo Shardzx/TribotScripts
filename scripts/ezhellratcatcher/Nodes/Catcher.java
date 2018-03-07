@@ -33,7 +33,7 @@ public class Catcher extends Node{
         if(EzBanking.isInBank() && Vars.inventorySpices.length > 0){
             return false;
         }
-        return Vars.hasFoundCat() && !Inventory.isFull() && (!Vars.shouldManageKitten || Vars.catFood.length > 0);
+        return Vars.hasFoundCat() && !Inventory.isFull() && (!Vars.shouldManageKitten || Vars.foodCount > 0);
     }
 
     public State getState(){

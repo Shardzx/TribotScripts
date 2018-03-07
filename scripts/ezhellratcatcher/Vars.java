@@ -47,7 +47,8 @@ public class Vars {
             behemothsFought = 0,
             behemothsDefeated = 0,
             withdrawAmount = 3,
-            nextEat = 0;
+            nextEat = 0,
+            foodCount = 0;
 
     public static long 		START_TIME,
             lastAction = 0,

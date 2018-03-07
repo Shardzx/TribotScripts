@@ -1,5 +1,6 @@
 package scripts.ezhellratcatcher.Nodes;
 
+import org.tribot.api.Clicking;
 import org.tribot.api.General;
 import org.tribot.api.Timing;
 import org.tribot.api.input.Mouse;
@@ -28,7 +29,7 @@ public class CatManager extends Node {
         }if(Vars.catIsHungry ){
             Vars.generateWaitingTime();
             if ((Game.isUptext("->") || Vars.catFood[0].click("Use")) &&
-                    AccurateMouse.click(Vars.npcCat[0], "Use " + Vars.catFood[0].getDefinition().getName() + " ->")) {
+                    Clicking.click("Use " + Vars.catFood[0].getDefinition().getName() + " -> " + Vars.npcCat[0].getName(),Vars.npcCat[0])) {
                 if (Timing.waitCondition(new Condition() {
 
                     @Override

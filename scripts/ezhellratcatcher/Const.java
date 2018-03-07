@@ -5,7 +5,7 @@ import org.tribot.api2007.ext.Filters;
 import org.tribot.api2007.types.*;
 
 public class Const {
-    public static final String[] CAT_NAMES = {"Cat", "Kitten", "Hell cat", "Hell kitten", "Hellcat", "Hell kitten", "Lazy cat", "Wily cat"};
+    public static final String[] CAT_NAMES = {"Pet cat", "Kitten", "Hell cat", "Hell kitten", "Hellcat", "Hell kitten", "Lazy cat", "Wily cat"};
 
     public static final Filter<RSNPC> CATS = Filters.NPCs.nameContains("kitten", "cat")
             .combine(Filters.NPCs.nameNotContains("overgrown"), false)

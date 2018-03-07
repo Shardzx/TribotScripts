@@ -69,7 +69,7 @@ public class Battler extends Node {
         if(EzBanking.isInBank() && Vars.inventorySpices.length > 0){
             return false;
         }
-        return Vars.hasFoundCat() && Vars.catFood.length > 3 && !Inventory.isFull();
+        return Vars.hasFoundCat() && Vars.foodCount > 3 && !Inventory.isFull();
     }
 
     @Override
@@ -197,7 +197,7 @@ public class Battler extends Node {
 
     private boolean hasCatFood(){
         Vars.catFood = Inventory.find(Vars.catFoodFilter);
-        return Vars.catFood.length > 0;
+        return Vars.foodCount > 0;
     }
 
 
