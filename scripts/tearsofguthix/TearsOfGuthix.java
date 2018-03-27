@@ -344,7 +344,7 @@ public class TearsOfGuthix extends EnumScript<State> implements Painting, Messag
 					}
 
 				}, 6000)) {
-					EzCamera.setCameraRotation(270);
+					EzCamera.setCamera(270,100);
 					Timing.waitCondition(EzConditions.tileEquals(new RSTile(3257, 9517, 2)), 8000);
 				}
 				break;
