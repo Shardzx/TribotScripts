@@ -15,6 +15,7 @@ import java.util.List;
 
 public class EzBanking {
 	public static boolean haveReopenedBank = false;
+	public static boolean outOfItem = false;
 	private static RSItem[] cachedSearch;
 	
 	private static int		DEPOSIT_BOX_MASTER = 192;
@@ -45,12 +46,13 @@ public class EzBanking {
 			for(String item: items){
 				if(getTotalCount(Filters.Items.nameContains(items))<num){
 					General.println("Out of item: " + item);
+					outOfItem = true;
 				}
 			}
 			return false;
 		} else{
 			haveReopenedBank = true;
-			return close(shouldWait) && open(shouldWait) && withdraw(num,shouldWait,items);
+			return close(true) && open(true) && withdraw(num,shouldWait,items);
 		}
 	}
 	
@@ -165,11 +167,61 @@ public class EzBanking {
 	public static boolean depositAll(boolean shouldWait) {
 		return Banking.depositAll() > 0 && shouldWait ? Timing.waitCondition(EzConditions.inventoryChange(false),5000) : true;
 	}
+	public static boolean depositAll(Filter<RSItem> filter, boolean shouldWait){
+		List<Integer> itemsDeposited = new ArrayList<Integer>();
+		boolean success = true;
+		for(RSItem i:Inventory.getAll()) {
+			if (!Banking.isBankScreenOpen())
+				return false;
+			if (!filter.accept(i) || itemsDeposited.contains(i.getID())) {
+				continue;
+			}
+			if (Banking.depositItem(i, 0)) {
+				itemsDeposited.add(i.getID());
+			} else {
+				success = false;
+			}
+		}
+		return shouldWait ? Timing.waitCondition(EzConditions.inventoryChange(false), 8000) : success;
+	}
+
+	public static boolean depositAllExcept(Filter<RSItem> filter, boolean shouldWait) {
+		List<Integer> itemsDeposited = new ArrayList<Integer>();
+		boolean success = true;
+		for(RSItem i:Inventory.getAll()){
+			if(!Banking.isBankScreenOpen())
+				return false;
+			if(filter.accept(i) ||itemsDeposited.contains(i.getID())) {
+				continue;
+			}
+			if(!Banking.depositItem(i,0)){
+				success = false;
+			} else {
+				itemsDeposited.add(i.getID());
+			}
+		}
+		return shouldWait ? Timing.waitCondition(EzConditions.inventoryChange(false), 8000) : success;
+	}
 
 	public static boolean withdraw(int num, boolean shouldWait, Filter<RSItem> filter) {
 		RSItem[] item = Banking.find(filter);
 		return item.length > 0 && Banking.withdrawItem(item[0], num) && shouldWait ? Timing.waitCondition(EzConditions.inventoryChange(true), 2500) : true;
 	}
 
+	public static boolean areNotesOn(){
+		return Game.getSetting(115)==1;
+	}
+	public static boolean turnNotesOn(){
+		RSInterfaceChild c = Interfaces.get(12,23);
+		return c!=null&&c.click();
+	}
+
+	public static int getTotalCount(String name){
+		if(!areItemsLoaded()){
+			General.sleep(1000);
+		}
+		cachedSearch = Banking.find(name);
+		return (cachedSearch.length > 0 ? cachedSearch[0].getStack() : 0) + Inventory.getCount(name);
+	}
 
 }

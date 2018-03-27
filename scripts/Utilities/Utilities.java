@@ -1,5 +1,6 @@
 package scripts.Utilities;
 
+import org.tribot.api.Clicking;
 import org.tribot.api.General;
 import org.tribot.api.Timing;
 import org.tribot.api.input.Keyboard;
@@ -7,6 +8,8 @@ import org.tribot.api.input.Mouse;
 import org.tribot.api.types.generic.Condition;
 import org.tribot.api2007.*;
 import org.tribot.api2007.types.*;
+import scripts.webwalker_logic.local.walker_engine.NPCInteraction;
+import scripts.webwalker_logic.local.walker_engine.interaction_handling.AccurateMouse;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -24,8 +27,51 @@ public class Utilities {
 
     public static boolean   shouldWaitForDropping = true;
 
+    public final static int	WELCOME_SCREEN_MASTER_ID = 378,
+            WELCOME_SCREEN_CHILD_ID = 6;
+
+    public static boolean isWelcomeScreenUp() {
+        return Interfaces.isInterfaceValid(WELCOME_SCREEN_MASTER_ID);
+    }
+    public static boolean handleWelcomeScreen(){
+        RSInterfaceChild login = Interfaces.get(WELCOME_SCREEN_MASTER_ID,WELCOME_SCREEN_CHILD_ID);
+        return login != null && login.click() && Timing.waitCondition(EzConditions.interfaceNotUp(WELCOME_SCREEN_MASTER_ID), 8000);
+    }
+
     public static boolean isConversing(){
         return NPCChat.getClickContinueInterface() != null || NPCChat.getOptions() != null;
+    }
+
+    public static String extractNumber(final String str) {
+
+        if(str == null || str.isEmpty()) return "";
+
+        StringBuilder sb = new StringBuilder();
+        boolean found = false;
+        for(char c : str.toCharArray()){
+            if(Character.isDigit(c)){
+                sb.append(c);
+                found = true;
+            } else if(found){
+                // If we already found a digit before and this char is not a digit, stop looping
+                break;
+            }
+        }
+
+        return sb.toString();
+    }
+    public static int getWildLevel(){
+        try{
+            RSInterface level = Interfaces.get(90, 46);
+            if(level == null)
+                return 0;
+            String txt = level.getText();
+            if(txt == null)
+                return 0;
+            return Integer.parseInt(Utilities.extractNumber(txt));
+        } catch(Exception e){
+            return 0;
+        }
     }
 
     public static boolean useItemOnObject(RSItem item, RSObject object, Condition completed){
@@ -86,6 +132,61 @@ public class Utilities {
         }
     }
 
+    public static boolean accurateClickObject(RSObject obj, boolean hasTried,String... options){
+        if(obj==null||!isTileOnMinimap(obj.getPosition()))
+            return !hasTried && PathFinding.canReach(obj, true) && Walking.walkPath(Walking.generateStraightPath(obj),EzConditions.objectVisible(obj),100)&&accurateClickObject(obj,true,options);
+        return AccurateMouse.click(obj,options)||(!hasTried&&isTileOnMinimap(obj.getPosition())&&findObject(obj,false)&&Timing.waitCondition(EzConditions.objectVisible(obj), 5000)&&accurateClickObject(obj,true,options));
+    }
+
+    public static boolean clickObject(RSObject obj,String option, boolean hasTried){
+        if(obj==null||!isTileOnMinimap(obj.getPosition()))
+            return !hasTried && PathFinding.canReach(obj, true) && Walking.walkPath(Walking.generateStraightPath(obj),EzConditions.objectVisible(obj),100)&&clickObject(obj,option,true);
+        return Clicking.click(option,obj)||(!hasTried&&isTileOnMinimap(obj.getPosition())&&findObject(obj,false)&&Timing.waitCondition(EzConditions.objectVisible(obj), 5000)&&clickObject(obj,option,true));
+    }
+
+    public static boolean findNPC(RSNPC npc, boolean hasTried){
+        if(npc==null)
+            return false;
+        RSTile myPos = Player.getPosition(),
+                npcPos = npc.getPosition();
+        int distance = myPos.distanceTo(npcPos);
+        if(distance>25){
+            return false;
+        }
+        if(distance<15){
+            acamera.turnToTile(npcPos);
+            if(!PathFinding.canReach(npcPos,false)){
+                return false;
+            }
+        }
+        if(npc.isOnScreen()&&npc.isClickable())
+            return true;
+        if(hasTried||distance> General.random(5,8)){
+            long t = Timing.currentTimeMillis();
+            while(Player.isMoving()&&!npc.isClickable()&&Timing.timeFromMark(t)<5000)
+                General.sleep(100,200);
+            return npc.isOnScreen()&&npc.isClickable()||npcPos.isClickable()? Walking.walkTo(npcPos):Walking.walkPath(Walking.generateStraightPath(npcPos));
+        }
+        else{
+
+            final RSNPC temp = npc;
+            return Timing.waitCondition(new Condition(){
+
+                @Override
+                public boolean active() {
+                    General.sleep(100,200);
+                    return temp.isOnScreen()&&temp.isClickable();
+                }
+
+            }, 2000)||findNPC(npc,true);
+        }
+    }
+    public static boolean clickNPC(RSCharacter npc,String option, boolean hasTried){
+        if(npc==null)
+            return false;
+        return Clicking.click(option,npc)||(!hasTried&&!npc.isOnScreen()&&findNPC((RSNPC)npc,false)&&Timing.waitCondition(EzConditions.npcVisible(npc.getName()), 5000)&&clickNPC(npc,option,true));
+    }
+
     public static RSTile getNearestTile(RSTile compareTo,RSObject o){
         RSTile[] tiles = o.getAllTiles();
         int minDistance = -1;
@@ -120,6 +221,10 @@ public class Utilities {
 
     public static RSItem getItemClosestToMouse(String... names) {
         RSItem[] items = Inventory.find(names);
+        return getItemClosestToMouse(items);
+    }
+
+    public static RSItem getItemClosestToMouse(RSItem... items){
         Point mouse_pos = Mouse.getPos();
         RSItem closest_item = null;
         double distance = 9999, temp_distance;
@@ -307,4 +412,53 @@ public class Utilities {
             inventoryRectangles[i] = item.getArea();
         }
     }
+
+    public static RSTile minimapToTile(Point p) {
+        if (!Projection.isInMinimap(p))
+            return null;
+        RSTile pos = Player.getPosition();
+        for (int x = pos.getX() - 20; x < pos.getX() + 20; x++) {
+            for (int y = pos.getY() - 20; y < pos.getY() + 20; y++) {
+                RSTile tile = new RSTile(x, y, pos.getPlane());
+                Point t = Projection.tileToMinimap(tile);
+                if (Math.abs(t.x - p.x) <= 2 && Math.abs(t.y - p.y) <= 2)
+                    return tile;
+            }
+        }
+        return null;
+    }
+    public static boolean isTileOnMinimap(RSTile tile){
+        return Projection.isInMinimap(Projection.tileToMinimap(tile));
+    }
+
+    public static boolean waitInventory(boolean increase, long ms){
+        return Timing.waitCondition(EzConditions.inventoryChange(increase),ms);
+    }
+
+    public static boolean waitBank(boolean isOpen){
+        return Timing.waitCondition(isOpen?EzConditions.bankIsClosed():EzConditions.bankIsOpen(),8000);
+    }
+
+    public static boolean waitChat(long ms){
+        return Timing.waitCondition(EzConditions.isConversing(),ms);
+    }
+
+    public static boolean waitArea(RSArea area,long ms){
+        return Timing.waitCondition(EzConditions.inArea(area),ms);
+    }
+
+    public static boolean waitInterface(int master, long ms){
+        return Timing.waitCondition(EzConditions.interfaceUp(master),ms);
+    }
+
+    public static boolean skipChat(boolean chooseOptions, String... options){
+        if(chooseOptions) {
+            NPCInteraction.handleConversation(options);
+            return true;
+        } else {
+            NPCInteraction.handleConversation();
+            return true;
+        }
+    }
+
 }

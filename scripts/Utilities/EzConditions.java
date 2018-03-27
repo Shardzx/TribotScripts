@@ -1,13 +1,32 @@
 package scripts.Utilities;
 
 import org.tribot.api.General;
+import org.tribot.api.interfaces.Positionable;
 import org.tribot.api.types.generic.Condition;
 import org.tribot.api.types.generic.Filter;
 import org.tribot.api2007.*;
 import org.tribot.api2007.Skills.SKILLS;
 import org.tribot.api2007.types.*;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class EzConditions {
+	public static Condition npcVisible(final String name){
+		return new Condition()
+		{
+
+			@Override
+			public boolean active() {
+				General.sleep(100);
+				RSNPC[] npcs = NPCs.findNearest(name);
+				return npcs.length>0 && npcs[0].isOnScreen();
+			}
+
+		};
+	}
+
 	public static Condition interfaceNotUp(final int id)
 	{
 		return new Condition()
@@ -170,6 +189,17 @@ public class EzConditions {
 		};
 	}
 	
+	public static Condition notInArea(final RSArea area){
+		return new Condition()
+		{
+			@Override
+			public boolean active() {
+				General.sleep(100);
+				return !area.contains(Player.getPosition());
+			}
+		};
+	}
+
 	public static Condition inArea(final RSArea area){
 		return new Condition()
 		{
@@ -204,6 +234,18 @@ public class EzConditions {
 			
 		};
 	}
+	public static Condition itemLeftInventory(int... item) {
+		final int count = Inventory.getCount(item);
+		return new Condition(){
+
+			@Override
+			public boolean active() {
+				General.sleep(100);
+				return Inventory.getCount(item) < count;
+			}
+
+		};
+	}
 	public static Condition itemEnteredInventory(String... item) {
 		final int count = Inventory.getCount(item);
 		return new Condition(){
@@ -214,6 +256,18 @@ public class EzConditions {
 				return Inventory.getCount(item) > count;
 			}
 			
+		};
+	}
+	public static Condition itemEnteredInventory(int... item) {
+		final int count = Inventory.getCount(item);
+		return new Condition(){
+
+			@Override
+			public boolean active() {
+				General.sleep(100);
+				return Inventory.getCount(item) > count;
+			}
+
 		};
 	}
 
@@ -254,5 +308,140 @@ public class EzConditions {
 		};
 	}
 
+	public static Condition interfaceVisible(final int id,final int child,final int component){
+		return new Condition()
+		{
+			@Override
+			public boolean active()
+			{
+				General.sleep(100);
+				RSInterface inter = Interfaces.get(id,child);
+				if(inter==null)
+					return false;
+				inter = inter.getChild(component);
+				return inter != null && !inter.isHidden();
+			}
+		};
 
+	}
+	public static Condition interfaceVisible(final int id){
+		return new Condition()
+		{
+			@Override
+			public boolean active()
+			{
+				General.sleep(100);
+				RSInterface inter = Interfaces.get(id);
+
+				return inter != null && !inter.isHidden();
+			}
+		};
+
+	}
+
+	public static Condition interfaceNotVisible(final int id,final int child,final int component){
+		return new Condition()
+		{
+			@Override
+			public boolean active()
+			{
+				General.sleep(100);
+				RSInterface inter = Interfaces.get(id,child);
+				if(inter==null)
+					return false;
+				inter = inter.getChild(component);
+				return inter == null || inter.isHidden();
+			}
+		};
+
+	}
+
+	public static Condition varbitChanged(final RSVarBit varbit, final int newValue){
+		return new Condition()
+		{
+			@Override
+			public boolean active()
+			{
+				General.sleep(100);
+				return varbit.getValue()==newValue;
+			}
+
+		};
+	}
+
+	public static Condition varbitChanged(final int id, final int newValue){
+		return new Condition()
+		{
+			@Override
+			public boolean active()
+			{
+				General.sleep(100);
+				RSVarBit newBit = RSVarBit.get(id);
+				return newBit != null && newBit.getValue() == newValue;
+			}
+
+		};
+	}
+
+    public static Condition areAnimating() {
+		return new Condition()
+		{
+			@Override
+			public boolean active()
+			{
+				General.sleep(100);
+				return Player.getAnimation() != -1;
+			}
+
+		};
+    }
+    public static Condition notAnimating() {
+		return new Condition()
+		{
+			@Override
+			public boolean active()
+			{
+				General.sleep(100);
+				return Player.getAnimation() == -1;
+			}
+
+		};
+	}
+
+	public static Condition objectVisible(String... name){
+		List<String> names = new ArrayList(Arrays.asList(name));
+		return new Condition(){
+
+			@Override
+			public boolean active() {
+				General.sleep(100);
+				RSObject[] o = Objects.findNearest(10,new Filter<RSObject>(){
+
+					@Override
+					public boolean accept(RSObject obj) {
+						RSObjectDefinition def = obj.getDefinition();
+						if(def == null)
+							return false;
+						String name = def.getName();
+						if(name == null)
+							return false;
+						return names.contains(name) && obj.isOnScreen();
+					}
+				});
+				return o.length > 0;
+			}
+		};
+	}
+
+	public static Condition tileEquals(Positionable tile) {
+		return new Condition() {
+			@Override
+			public boolean active() {
+				General.sleep(100);
+				return Player.getPosition().equals(tile);
+			}
+
+			;
+		};
+	}
 }
