@@ -70,10 +70,16 @@ public class TearsOfGuthix extends EnumScript<State> implements Painting, Messag
 		collectedTears = false; // check msgs
 		ACamera camera;
 		Utilities.acamera = (camera = new ACamera(this));
-		if (currentStep < 2 && !hasQuestItems() && TEARS_CAVE.contains(Player.getPosition())) {
-			println("Error starting up. Please make sure you have all quest items.");
-			return null;
+		if(currentStep < 2){
+			if (!hasQuestItems() && TEARS_CAVE.contains(Player.getPosition())) {
+				println("Error starting up. Please make sure you have all quest items.");
+				return null;
+			} else if(Skills.SKILLS.FIREMAKING.getActualLevel() < 50 || Skills.SKILLS.CRAFTING.getActualLevel() < 20 || Skills.SKILLS.MINING.getActualLevel() < 20){
+				println("Error starting up. You don't meet the requirements for Tears of Guthix.");
+				return null;
+			}
 		}
+
 		return getState();
 	}
 
