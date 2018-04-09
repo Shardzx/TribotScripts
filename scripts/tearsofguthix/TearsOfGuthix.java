@@ -70,7 +70,7 @@ public class TearsOfGuthix extends EnumScript<State> implements Painting, Messag
 		collectedTears = false; // check msgs
 		ACamera camera;
 		Utilities.acamera = (camera = new ACamera(this));
-		if(currentStep < 2){
+		if(getQuestStep() < 2){
 			if (!hasQuestItems() && TEARS_CAVE.contains(Player.getPosition())) {
 				println("Error starting up. Please make sure you have all quest items.");
 				return null;
